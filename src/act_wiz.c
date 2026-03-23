@@ -6771,7 +6771,7 @@ void save_map_png( )
  *
  * Syntax:
  *   aifaction list
- *   aifaction create <name> <owner_name> [aggression] [hostility]
+ *   aifaction create <name> [aggression] [hostility]
  *   aifaction delete <name>
  *   aifaction set <name> active|inactive
  *   aifaction set <name> aggression <0-100>
@@ -6791,7 +6791,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
 
     argument = one_argument( argument, arg1 );
     argument = one_argument( argument, arg2 );
-    one_argument( argument, arg3 );
+    /* arg3 consumed per-subcommand as needed; argument holds the remainder */
 
     if ( arg1[0] == '\0' || !str_cmp( arg1, "list" ) )
     {
@@ -6827,11 +6827,11 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
     if ( !str_cmp( arg1, "create" ) )
     {
         char owner_pfx[MAX_INPUT_LENGTH];
+        char tmp1[MAX_INPUT_LENGTH], tmp2[MAX_INPUT_LENGTH];
 
-        if ( arg2[0] == '\0' || arg3[0] == '\0' )
+        if ( arg2[0] == '\0' )
         {
-            send_to_char( "Syntax: aifaction create <name> <owner_suffix> [aggression] [hostility]\n\r"
-                          "  owner_suffix will be prefixed with AI_ automatically.\n\r", ch );
+            send_to_char( "Syntax: aifaction create <name> [aggression] [hostility]\n\r", ch );
             return;
         }
         if ( find_ai_faction( arg2 ) )
@@ -6848,7 +6848,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
         AI_FACTION *fac = &ai_factions[num_ai_factions];
         memset( fac, 0, sizeof(*fac) );
         fac->name = str_dup( arg2 );
-        snprintf( owner_pfx, sizeof(owner_pfx), "%s%s", AI_OWNER_PREFIX, arg3 );
+        snprintf( owner_pfx, sizeof(owner_pfx), "%s%s", AI_OWNER_PREFIX, arg2 );
         fac->owner_name       = str_dup( owner_pfx );
         fac->description      = str_dup( "" );
         fac->active           = TRUE;
@@ -6857,22 +6857,13 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
         fac->attack_timer     = number_range( 0, 30 );
         fac->repair_timer     = number_range( 0, AI_REPAIR_INTERVAL );
 
-        /* optional aggression / hostility from remaining args */
-        {
-            char tmp1[MAX_INPUT_LENGTH], tmp2[MAX_INPUT_LENGTH];
-            argument = one_argument( argument, tmp1 );
-            one_argument( argument, tmp2 );
-            if ( tmp1[0] )
-            {
-                int v = atoi( tmp1 );
-                fac->aggression = URANGE( 0, v, 100 );
-            }
-            if ( tmp2[0] )
-            {
-                int v = atoi( tmp2 );
-                fac->player_hostility = URANGE( 0, v, 100 );
-            }
-        }
+        /* optional aggression and hostility */
+        argument = one_argument( argument, tmp1 );
+        one_argument( argument, tmp2 );
+        if ( tmp1[0] )
+            fac->aggression = URANGE( 0, atoi(tmp1), 100 );
+        if ( tmp2[0] )
+            fac->player_hostility = URANGE( 0, atoi(tmp2), 100 );
 
         num_ai_factions++;
         save_ai_factions();
@@ -6966,6 +6957,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
     {
         AI_FACTION *fac;
 
+        one_argument( argument, arg3 );
         if ( arg2[0] == '\0' || arg3[0] == '\0' )
         {
             send_to_char( "Syntax: aifaction addtarget <faction> <target_faction>\n\r", ch );
@@ -6983,7 +6975,6 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
             send_to_char( "That faction already has the maximum number of targets.\n\r", ch );
             return;
         }
-        /* check duplicate */
         for ( i = 0; i < fac->num_targets; i++ )
             if ( fac->target_names[i] && !str_cmp( fac->target_names[i], arg3 ) )
             {
@@ -7002,6 +6993,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
         AI_FACTION *fac;
         int t;
 
+        one_argument( argument, arg3 );
         if ( arg2[0] == '\0' || arg3[0] == '\0' )
         {
             send_to_char( "Syntax: aifaction deltarget <faction> <target_faction>\n\r", ch );
@@ -7045,7 +7037,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
 
     send_to_char( "Syntax:\n\r"
                   "  aifaction list\n\r"
-                  "  aifaction create <name> <owner_suffix> [aggression] [hostility]\n\r"
+                  "  aifaction create <name> [aggression] [hostility]\n\r"
                   "  aifaction delete <name>\n\r"
                   "  aifaction set <name> active|inactive\n\r"
                   "  aifaction set <name> aggression <0-100>\n\r"

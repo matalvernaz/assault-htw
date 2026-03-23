@@ -4277,7 +4277,7 @@ Bthere <direction>
 @@gAI Faction Admin Command@@N
 @@g
 @@c Syntax: @@aaifaction list
-@@c         @@aaifaction create <name> <owner_suffix> [aggression] [hostility]
+@@c         @@aaifaction create <name> [aggression] [hostility]
 @@c         @@aaifaction delete <name>
 @@c         @@aaifaction set <name> active|inactive
 @@c         @@aaifaction set <name> aggression <0-100>
@@ -4287,35 +4287,32 @@ Bthere <direction>
 @@c         @@aaifaction reload
 @@c         @@aaifaction save
 @@g
-@@g  AI factions are autonomous factions that own and attack buildings without
-@@g  a real player logged in. They fight each other and can optionally hit
-@@g  player buildings too.
+@@g  AI factions own and attack buildings autonomously without a real player
+@@g  logged in. They fight each other and can optionally hit players too.
 @@g
 @@WQUICK START:@@g
 @@g  1. Create the faction:
-@@c       aifaction create RedClan RedClan 70 20
-@@g     This makes a faction named @@aRedClan@@g whose buildings will show as
-@@g     owned by @@aAI_RedClan@@g in-game (the prefix @@cAI_@@g is added automatically).
+@@c       aifaction create RedClan 70 20
+@@g     Name is @@aRedClan@@g, aggression 70, player hostility 20.
+@@g     Its buildings will show as owned by @@aAI_RedClan@@g (prefix added automatically).
 @@g
-@@g  2. Give it some buildings using bset:
+@@g  2. Give it buildings with bset:
 @@c       bset <building#> owner AI_RedClan
-@@g     Use @@cblist@@g to find building numbers. The owner string must exactly match
-@@g     the faction's owner name (@@cAI_@@g + whatever suffix you chose).
+@@g     Use @@cblist@@g to find building numbers. The owner string is always
+@@g     @@cAI_@@g followed by the faction name you chose.
 @@g
-@@g  3. Set up enemies:
+@@g  3. Optionally set up enemies:
 @@c       aifaction addtarget RedClan BlueClan
-@@g     RedClan will now primarily attack BlueClan's buildings.
-@@g     Without targets, it attacks any other AI faction's buildings.
+@@g     RedClan will now prioritise attacking BlueClan's buildings.
+@@g     Without targets it attacks any other AI faction at random.
 @@g
 @@WPARAMETERS:@@g
-@@a  name        @@g- Single-word display name shown when it attacks (e.g. RedClan).
-@@a  owner_suffix@@g- The part after @@cAI_@@g in the owner string. Usually same as name.
-@@a              @@g  Must match exactly what you type in bset.
-@@a  aggression  @@g- 0-100. How often it attacks. 100 = very frequent. Default 50.
-@@a  hostility   @@g- 0-100. How often it targets player buildings instead of rival
-@@a              @@g  AI. 0 = only fights AI, 100 = prefers players. Default 30.
+@@a  name       @@g- Single-word name used everywhere: display, owner string, targeting.
+@@a  aggression @@g- 0-100. How often it attacks. 100 = very frequent. Default 50.
+@@a  hostility  @@g- 0-100. Chance to target player buildings instead of rival AI.
+@@a             @@g  0 = only fights AI, 100 = prefers players. Default 30.
 @@g
-@@g  Faction data is saved to @@adata/aifactions.dat@@g and reloads at boot.
+@@g  Faction data saves to @@adata/aifactions.dat@@g and reloads at boot.
 @@g  Use @@caifaction list@@g to see all factions and their current settings.
 @@N
 ~
