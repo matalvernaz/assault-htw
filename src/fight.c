@@ -45,12 +45,12 @@
 /*
  * Local functions.
  */
-void    one_hit         args( ( CHAR_DATA *ch, CHAR_DATA *victim, int dt ) );
-void    raw_kill        args( ( CHAR_DATA *victim, char *argument ) );
-void    disarm          args( ( CHAR_DATA *ch, CHAR_DATA *victim, OBJ_DATA * obj ) );
-void    air_bomb    args( ( CHAR_DATA *ch ) );
-bool    check_group args( ( CHAR_DATA *ch, CHAR_DATA *vch ) );
-bool    no_lag      args( ( CHAR_DATA *ch, CHAR_DATA *vch ) );
+void    one_hit         ( CHAR_DATA *ch, CHAR_DATA *victim, int dt );
+void    raw_kill        ( CHAR_DATA *victim, char *argument );
+void    disarm          ( CHAR_DATA *ch, CHAR_DATA *victim, OBJ_DATA * obj );
+void    air_bomb    ( CHAR_DATA *ch );
+bool    check_group ( CHAR_DATA *ch, CHAR_DATA *vch );
+bool    no_lag      ( CHAR_DATA *ch, CHAR_DATA *vch );
 
 char * const wear_name[MAX_WEAR] =
 {

@@ -47,7 +47,7 @@ char    compress_on_str   [] = { IAC, WILL, TELOPT_COMPRESS, '\0' };
 char    compress2_on_str   [] = { IAC, WILL, TELOPT_COMPRESS2, '\0' };
 
 bool processCompressed(DESCRIPTOR_DATA *desc);
-bool    write_to_descriptor     args( ( DESCRIPTOR_DATA *d, char *txt, int length ) );
+bool    write_to_descriptor     ( DESCRIPTOR_DATA *d, char *txt, int length );
 
 void *zlib_alloc(void *opaque, unsigned int items, unsigned int size)
 {

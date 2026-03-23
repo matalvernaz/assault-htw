@@ -41,11 +41,11 @@
 #include <unistd.h>                                         /* unlink() */
 #include "ack.h"
 
-bool    check_social    args( ( CHAR_DATA *ch, char *command,
-                                char *argument ) );
+bool    check_social    ( CHAR_DATA *ch, char *command,
+                                char *argument );
 
 /* Disabled stuff - Wyn */
-bool    check_disabled  args ( ( CHAR_DATA *ch, const struct cmd_type *command ) );
+bool    check_disabled  ( CHAR_DATA *ch, const struct cmd_type *command );
 
 DISABLED_DATA *disabled_first;
 

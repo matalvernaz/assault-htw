@@ -83,7 +83,7 @@ int numFree;
 bool Full;
 extern bool fBootDb;
 
-static unsigned get_string_hash args( ( register const char *, int ) );
+static unsigned get_string_hash ( register const char *, int );
 
 /*
  * ssm_buf_head points to start of shared space,

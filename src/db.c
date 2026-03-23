@@ -49,7 +49,7 @@
 #include "tables.h"
 
 #if !defined(macintosh)
-extern int _filbuf args( (FILE *) );
+extern int _filbuf (FILE *);
 #endif
 
 /*
@@ -68,7 +68,7 @@ int total_quotes;
 bool booting_up;
 bool area_resetting_global;
 bool mem_log;
-void insert_area args ( ( AREA_DATA *pArea) ); /* Auto-sort of areas */
+void insert_area ( AREA_DATA *pArea); /* Auto-sort of areas */
 
 const int convert_wearflags[] = {
 BIT_24, BIT_14, BIT_8, BIT_19, BIT_4, BIT_21, BIT_22, BIT_13,
@@ -151,35 +151,35 @@ int area_revision = -1;
 /*
  * Local booting procedures.
  */
-void init_mm args( ( void ) );
+void init_mm ( void );
 
-void load_area args( ( FILE *fp ) );
-void load_helps args( ( FILE *fp ) );
-void load_mobiles args( ( FILE *fp ) );
-void load_objects args( ( FILE *fp ) );
-void load_resets args( ( FILE *fp ) );
-void load_rooms args( ( FILE *fp ) );
-void load_specials args( ( FILE *fp ) );
-void load_objfuns args( ( FILE *fp ) );
-void load_gold args( ( void ) );
-void load_alliances args( ( void ) );
-void load_changes args( ( void ) );
-void load_logs args( ( void ) );
-void read_map_from_file args( ( void ) );
-void create_load_list args( ( void ) );
-void load_buildings args( ( void ) );
-void load_scores args( ( void ) );
-void load_multiplay args( ( void ) );
-void load_ranks args( ( void ) );
-void load_quotes args( ( void ) );
-void load_bans args( ( void ) );
-void load_brands args( ( void ) );
+void load_area ( FILE *fp );
+void load_helps ( FILE *fp );
+void load_mobiles ( FILE *fp );
+void load_objects ( FILE *fp );
+void load_resets ( FILE *fp );
+void load_rooms ( FILE *fp );
+void load_specials ( FILE *fp );
+void load_objfuns ( FILE *fp );
+void load_gold ( void );
+void load_alliances ( void );
+void load_changes ( void );
+void load_logs ( void );
+void read_map_from_file ( void );
+void create_load_list ( void );
+void load_buildings ( void );
+void load_scores ( void );
+void load_multiplay ( void );
+void load_ranks ( void );
+void load_quotes ( void );
+void load_bans ( void );
+void load_brands ( void );
 
-void fix_exits args( ( void ) );
-void check_resets args( ( void ) );
+void fix_exits ( void );
+void check_resets ( void );
 
-void copyover_recover args( ( void ) );
-void init_dealer args( ( void ) );
+void copyover_recover ( void );
+void init_dealer ( void );
 
 #define SHOW_AREA \
     if (!previous_bug) \

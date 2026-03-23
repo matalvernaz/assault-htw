@@ -43,10 +43,10 @@
  * Local functions.
  */
 #define CD CHAR_DATA
-void    wear_obj        args( ( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace ) );
-CD *    find_keeper     args( ( CHAR_DATA *ch ) );
-int     get_cost        args( ( CHAR_DATA *keeper, OBJ_DATA *obj, bool fBuy ) );
-void    check_guards    args( ( CHAR_DATA *ch ) );
+void    wear_obj        ( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace );
+CD *    find_keeper     ( CHAR_DATA *ch );
+int     get_cost        ( CHAR_DATA *keeper, OBJ_DATA *obj, bool fBuy );
+void    check_guards    ( CHAR_DATA *ch );
 #undef  CD
 
 void get_obj( CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *container )
@@ -1232,8 +1232,8 @@ void wear_obj( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace )
     return;
 }
 
-char *  format_obj_to_char      args( ( OBJ_DATA *obj, CHAR_DATA *ch,
-                                        bool fShort ) );
+char *  format_obj_to_char      ( OBJ_DATA *obj, CHAR_DATA *ch,
+                                        bool fShort );
 
 void do_wear( CHAR_DATA *ch, char *argument )
 {

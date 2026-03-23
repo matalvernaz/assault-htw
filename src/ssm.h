@@ -79,8 +79,8 @@ char *_str_dup(const char *, const char *);                 /* str_dup is now a 
 void _free_string(char *, const char *);                    /* another macro          */
 char *_fread_string(FILE *, const char *);                  /* fread_string as well   */
 char *fread_word_dup(FILE *);                               /* Implement later to check words also */
-void        temp_hash_add   args( ( char *, int ) );
-char *      temp_hash_find  args( ( const char *, int ) );
+void        temp_hash_add   ( char *, int );
+char *      temp_hash_find  ( const char *, int );
 
 /*
  * ssm_buf_head points to start of shared space,

@@ -49,8 +49,8 @@ extern char * quote_table[MAX_QUOTE];
 /*
  * Local functions.
  */
-void talk_channel args( ( CHAR_DATA *ch, char *argument,
-				int channel, const char *verb ) );
+void talk_channel ( CHAR_DATA *ch, char *argument,
+				int channel, const char *verb );
 
 /*
  * Generic channel function.

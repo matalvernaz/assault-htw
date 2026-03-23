@@ -68,7 +68,7 @@
  * Act functions.
  */
 
-bool blind_combat_check args( (CHAR_DATA *ch) );
+bool blind_combat_check (CHAR_DATA *ch);
 DECLARE_ACT_FUN( act_build );
 DECLARE_ACT_FUN( act_research );
 DECLARE_ACT_FUN( act_sneak );

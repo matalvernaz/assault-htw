@@ -44,23 +44,23 @@
 /*
  * Local functions.
  */
-bool    fast_healing    args( (CHAR_DATA *ch) );
-int     hit_gain        args( ( CHAR_DATA *ch ) );
-//void    weather_update  args( ( void ) );
-//void    init_weather    args( ( void ) );
-void    char_update     args( ( void ) );
-void    gain_update     args( ( void ) );
-void    obj_update      args( ( void ) );
-void    bomb_update     args( ( void ) );
-void    vehicle_update  args( ( void ) );
-void    aggr_update     args( ( void ) );
-void    rooms_update    args( ( void ) );
-void    quest_update    args( ( void ) );
-void    maze_update     args( ( void ) );
-void    update_last_obj args( ( void ) );
-void    mode_update     args( ( void ) );
-void    spec_update args( ( void ) );
-void    spec_up     args( ( CHAR_DATA *ch ) );
+bool    fast_healing    (CHAR_DATA *ch);
+int     hit_gain        ( CHAR_DATA *ch );
+//void    weather_update  ( void );
+//void    init_weather    ( void );
+void    char_update     ( void );
+void    gain_update     ( void );
+void    obj_update      ( void );
+void    bomb_update     ( void );
+void    vehicle_update  ( void );
+void    aggr_update     ( void );
+void    rooms_update    ( void );
+void    quest_update    ( void );
+void    maze_update     ( void );
+void    update_last_obj ( void );
+void    mode_update     ( void );
+void    spec_update ( void );
+void    spec_up     ( CHAR_DATA *ch );
 
 int abort_threshold = BOOT_DB_ABORT_THRESHOLD;
 bool    disable_timer_abort = FALSE;

@@ -890,21 +890,21 @@ struct relevel_data {
 };
 
 /* prototypes from db.c */
-BOMB_DATA * make_bomb   args( ( OBJ_DATA *obj ) );
-void    load_disabled   args( ( void ) );
-void    save_disabled   args( ( void ) );
-void  load_buildings_b  args( ( int mode ) );
-void  load_vehicles     args( ( int mode ) );
-void    load_building_t args( ( void ) );
-void    reward_votes args( ( void ) );
+BOMB_DATA * make_bomb   ( OBJ_DATA *obj );
+void    load_disabled   ( void );
+void    save_disabled   ( void );
+void  load_buildings_b  ( int mode );
+void  load_vehicles     ( int mode );
+void    load_building_t ( void );
+void    reward_votes ( void );
 /*
  * Extended bitvector utility functions, in handler.c.
  */
-bool    xbv_is_empty    args( ( XBV *bits ) );
-bool    xbv_same_bits   args( ( XBV *dest, const XBV *src ) );
-void    xbv_clear_bits  args( ( XBV *bits ) );
-void    xbv_set_bits    args( ( XBV *dest, const XBV *src ) );
-void    xbv_remove_bits args( ( XBV *dest, const XBV *src ) );
+bool    xbv_is_empty    ( XBV *bits );
+bool    xbv_same_bits   ( XBV *dest, const XBV *src );
+void    xbv_clear_bits  ( XBV *bits );
+void    xbv_set_bits    ( XBV *dest, const XBV *src );
+void    xbv_remove_bits ( XBV *dest, const XBV *src );
 
 /*
  * Our function prototypes.
@@ -919,264 +919,260 @@ void    xbv_remove_bits args( ( XBV *dest, const XBV *src ) );
 //#define OF	OBJ_FUN
 
 /* act_clan.c */
-void    load_clan_table args( ( void ) );
-void    save_clan_table args( ( void ) );
-void    load_map_data args(  ( void )  );
+void    load_clan_table ( void );
+void    save_clan_table ( void );
+void    load_map_data ( void );
 
 /* act_comm.c */
-bool    can_multiplay   args( ( CHAR_DATA *ch ) );
-void    add_follower    args( ( CHAR_DATA *ch, CHAR_DATA *master ) );
-void    stop_follower   args( ( CHAR_DATA *ch ) );
-void    die_follower    args( ( CHAR_DATA *ch ) );
-void    send_to_loc        args( ( char *message, int x, int y, int z ) );
-void    list_who_to_output   args(  ( void )   );
+bool    can_multiplay   ( CHAR_DATA *ch );
+void    add_follower    ( CHAR_DATA *ch, CHAR_DATA *master );
+void    stop_follower   ( CHAR_DATA *ch );
+void    die_follower    ( CHAR_DATA *ch );
+void    send_to_loc        ( char *message, int x, int y, int z );
+void    list_who_to_output   ( void );
 
 /* act_info.c */
-void    set_title       args( ( CHAR_DATA *ch, char *title ) );
-char *  color_string   args( ( CHAR_DATA *CH, char *argument ) );
-void    display_details args( ( CHAR_DATA * viewer, CHAR_DATA *ch ) );
-void    display_details_old args( ( CHAR_DATA * viewer, CHAR_DATA *ch ) );
-void    show_building_info args( (CHAR_DATA *ch, int i) );
+void    set_title       ( CHAR_DATA *ch, char *title );
+char *  color_string   ( CHAR_DATA *CH, char *argument );
+void    display_details ( CHAR_DATA * viewer, CHAR_DATA *ch );
+void    display_details_old ( CHAR_DATA * viewer, CHAR_DATA *ch );
+void    show_building_info (CHAR_DATA *ch, int i);
 
 /* act_move.c */
-void    move_char       args( ( CHAR_DATA *ch, int door ) );
-void    crash       args( ( CHAR_DATA *ch, CHAR_DATA *attacker ) );
-void    move        args( ( CHAR_DATA *ch, int x, int y, int z ) );
-void    move_vehicle    args( ( VEHICLE_DATA *vhc, int x, int y, int z ) );
-void    move_obj    args( ( OBJ_DATA *obj, int x, int y, int z ) );
+void    move_char       ( CHAR_DATA *ch, int door );
+void    crash       ( CHAR_DATA *ch, CHAR_DATA *attacker );
+void    move        ( CHAR_DATA *ch, int x, int y, int z );
+void    move_vehicle    ( VEHICLE_DATA *vhc, int x, int y, int z );
+void    move_obj    ( OBJ_DATA *obj, int x, int y, int z );
 bool has_boat(CHAR_DATA *ch);
 
 /* act_obj.c */
-void    get_obj     args( ( CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *container ) );
+void    get_obj     ( CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *container );
 bool can_wear_at(CHAR_DATA * ch, OBJ_DATA * obj, int location);
-void    wear_obj        args( ( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace ) );
+void    wear_obj        ( CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace );
 
 /* board.c */
 BOARD_DATA * load_board(OBJ_DATA * obj);
-void    do_show_contents        args( ( CHAR_DATA *ch, OBJ_DATA * obj ) );
-void    do_show_message         args( ( CHAR_DATA *ch, int mess_num, OBJ_DATA * obj ) );
-void    do_edit_message     args( ( CHAR_DATA *ch, int mess_num, OBJ_DATA * obj ) );
-void    do_add_to_message       args( ( CHAR_DATA *ch, char *argument ) );
-void    do_start_a_message      args( ( CHAR_DATA *ch, char *argument ) );
-void    save_message_data       args( ( void ) );
-void    load_messages           args( ( void ) );
+void    do_show_contents        ( CHAR_DATA *ch, OBJ_DATA * obj );
+void    do_show_message         ( CHAR_DATA *ch, int mess_num, OBJ_DATA * obj );
+void    do_edit_message     ( CHAR_DATA *ch, int mess_num, OBJ_DATA * obj );
+void    do_add_to_message       ( CHAR_DATA *ch, char *argument );
+void    do_start_a_message      ( CHAR_DATA *ch, char *argument );
+void    save_message_data       ( void );
+void    load_messages           ( void );
 
 /* comm.c */
-void    close_socket    args( ( DESCRIPTOR_DATA *dclose ) );
-void    show_menu_to    args( ( DESCRIPTOR_DATA *d ) );     /* Main */
-void    show_smenu_to   args( ( DESCRIPTOR_DATA *d ) );     /* Sex */
-void    show_cmenu_to   args( ( DESCRIPTOR_DATA *d ) );     /* Class */
-void    show_bmenu_to   args( ( DESCRIPTOR_DATA *d ) );     /* Bonus */
-void   show_pmenu_to    args( ( DESCRIPTOR_DATA *d ) );     /* Planet */
-void    write_to_buffer args( ( DESCRIPTOR_DATA *d, const char *txt,
-                                int length ) );
-void    send_to_char    args( ( const char *txt, CHAR_DATA *ch ) );
-void    show_string     args( ( DESCRIPTOR_DATA *d, char *input ) );
-void    act             args( ( const char *format, CHAR_DATA *ch,
-                                const void *arg1, const void *arg2, int type ) );
-void    hang            args( ( const char *str ) );
+void    close_socket    ( DESCRIPTOR_DATA *dclose );
+void    show_menu_to    ( DESCRIPTOR_DATA *d );     /* Main */
+void    show_smenu_to   ( DESCRIPTOR_DATA *d );     /* Sex */
+void    show_cmenu_to   ( DESCRIPTOR_DATA *d );     /* Class */
+void    show_bmenu_to   ( DESCRIPTOR_DATA *d );     /* Bonus */
+void   show_pmenu_to    ( DESCRIPTOR_DATA *d );     /* Planet */
+void    write_to_buffer ( DESCRIPTOR_DATA *d, const char *txt,
+                                int length );
+void    send_to_char    ( const char *txt, CHAR_DATA *ch );
+void    show_string     ( DESCRIPTOR_DATA *d, char *input );
+void    act             ( const char *format, CHAR_DATA *ch,
+                                const void *arg1, const void *arg2, int type );
+void    hang            ( const char *str );
 
 /* db.c */
-void    load_sobjects   args( ( int mode ) );
-void   perm_update args( ( void ) );
-void    boot_db         args( ( bool fCopyOver ) );
-void    area_update     args( ( void ) );
-OD *    create_object   args( ( OBJ_INDEX_DATA *pObjIndex, int level ) );
-CD *    create_mobile   args( ( MOB_INDEX_DATA *pMobIndex ) );
-BUILDING_DATA *    create_building   args( ( int type ) );
-VEHICLE_DATA *     create_vehicle   args( ( int type ) );
-void    clear_char      args( ( CHAR_DATA *ch ) );
-void    free_char       args( ( CHAR_DATA *ch ) );
-MID *   get_mob_index   args( ( int vnum ) );
-OID *   get_obj_index   args( ( int vnum ) );
-RID *   get_room_index  args( ( int vnum ) );
-char    fread_letter    args( ( FILE *fp ) );
-int     fread_number    args( ( FILE *fp ) );
-long_int fread_long_number args( ( FILE *fp ) );
-char *  fread_string    args( ( FILE *fp ) );
-void    fread_to_eol    args( ( FILE *fp ) );
-char *  fsave_to_eol    args( ( FILE *fp ) );
-char *  fread_word      args( ( FILE *fp ) );
+void    load_sobjects   ( int mode );
+void   perm_update ( void );
+void    boot_db         ( bool fCopyOver );
+void    area_update     ( void );
+OD *    create_object   ( OBJ_INDEX_DATA *pObjIndex, int level );
+CD *    create_mobile   ( MOB_INDEX_DATA *pMobIndex );
+BUILDING_DATA *    create_building   ( int type );
+VEHICLE_DATA *     create_vehicle   ( int type );
+void    clear_char      ( CHAR_DATA *ch );
+void    free_char       ( CHAR_DATA *ch );
+MID *   get_mob_index   ( int vnum );
+OID *   get_obj_index   ( int vnum );
+RID *   get_room_index  ( int vnum );
+char    fread_letter    ( FILE *fp );
+int     fread_number    ( FILE *fp );
+long_int fread_long_number ( FILE *fp );
+void    fread_to_eol    ( FILE *fp );
+char *  fsave_to_eol    ( FILE *fp );
+char *  fread_word      ( FILE *fp );
 
-/* void *  alloc_mem       args( ( int sMem ) );
-void    check_freed     args( ( unsigned int first, unsigned int last) );
-void    check_free_mem  args( ( void ) );
-void *  alloc_perm      args( ( int sMem ) );
-void    free_mem        args( ( void *pMem, int sMem ) );*/
+/* void *  alloc_mem       ( int sMem );
+void    check_freed     ( unsigned int first, unsigned int last);
+void    check_free_mem  ( void );
+void *  alloc_perm      ( int sMem );
+void    free_mem        ( void *pMem, int sMem );*/
 
 /* spec: renamed getmem -> _getmem, nuked unused alloc_perm */
-/* void *  alloc_perm      args( ( int sMem ) ); */
-void *  _getmem     args( ( int size, const char *caller, int log ) );
-void    dispose     args( ( void *mem, int size ) );
-char *  str_dup         args( ( const char *str ) );
-void    free_string     args( ( char *pstr ) );
-int     number_fuzzy    args( ( int number ) );
-int     number_range    args( ( int from, int to ) );
-int     number_percent  args( ( void ) );
-int     number_door     args( ( void ) );
-int     number_bits     args( ( int width ) );
-int     number_mm       args( ( void ) );
-int     dice            args( ( int number, int size ) );
-int     interpolate     args( ( int level, int value_00, int value_32 ) );
-void    append_file     args( ( CHAR_DATA *ch, char *file, char *str ) );
-void    bug             args( ( const char *str, int param ) );
-void    log_string      args( ( const char *str ) );
-void    tail_chain      args( ( void ) );
-void    safe_strcat     args( ( int max_len, char * dest,char * source ) );
-void    send_to_descrips args( ( const char *message ) );
-void    bug_string      args( ( const char *str, const char *str2) );
+/* void *  alloc_perm      ( int sMem ); */
+void *  _getmem     ( int size, const char *caller, int log );
+int     number_fuzzy    ( int number );
+int     number_range    ( int from, int to );
+int     number_percent  ( void );
+int     number_door     ( void );
+int     number_bits     ( int width );
+int     number_mm       ( void );
+int     dice            ( int number, int size );
+int     interpolate     ( int level, int value_00, int value_32 );
+void    append_file     ( CHAR_DATA *ch, char *file, char *str );
+void    bug             ( const char *str, int param );
+void    log_string      ( const char *str );
+void    tail_chain      ( void );
+void    safe_strcat     ( int max_len, char * dest,char * source );
+void    send_to_descrips ( const char *message );
+void    bug_string      ( const char *str, const char *str2);
 /* Added stuff -Flar */
 void    bugf (char * fmt, ...) __attribute__ ((format(printf,1,2)));
 void    log_f (char * fmt, ...) __attribute__ ((format(printf,1,2)));
 
 /* fight.c */
-void    gain_exp    args( ( CHAR_DATA *ch, int value ) );
-void    damage          args( ( CHAR_DATA *ch, CHAR_DATA *victim, int dam,
-                                int dt ) );
-void    damage_building args( ( CHAR_DATA *ch, BUILDING_DATA *bld, int dam ) );
-void    damage_vehicle  args( ( CHAR_DATA *ch, VEHICLE_DATA *vhc, int dam, int dt ) );
-void    update_pos      args( ( CHAR_DATA *victim ) );
-void    raw_kill        args( ( CHAR_DATA *victim, char *argument ) );
-void    set_fighting    args( ( CHAR_DATA *ch, CHAR_DATA *victim ) );
-void    check_armor     args( ( OBJ_DATA *obj ) );
-bool    check_dead  args( ( CHAR_DATA *ch, CHAR_DATA *victim ) );
-void    pdie        args( ( CHAR_DATA *ch ) );
-void    set_stun    args( ( CHAR_DATA *ch, int time ) );
-bool    same_planet     args( (CHAR_DATA *ch, CHAR_DATA *vch ) );
+void    gain_exp    ( CHAR_DATA *ch, int value );
+void    damage          ( CHAR_DATA *ch, CHAR_DATA *victim, int dam,
+                                int dt );
+void    damage_building ( CHAR_DATA *ch, BUILDING_DATA *bld, int dam );
+void    damage_vehicle  ( CHAR_DATA *ch, VEHICLE_DATA *vhc, int dam, int dt );
+void    update_pos      ( CHAR_DATA *victim );
+void    raw_kill        ( CHAR_DATA *victim, char *argument );
+void    set_fighting    ( CHAR_DATA *ch, CHAR_DATA *victim );
+void    check_armor     ( OBJ_DATA *obj );
+bool    check_dead  ( CHAR_DATA *ch, CHAR_DATA *victim );
+void    pdie        ( CHAR_DATA *ch );
+void    set_stun    ( CHAR_DATA *ch, int time );
+bool    same_planet     (CHAR_DATA *ch, CHAR_DATA *vch );
 
 /* handler.c */
-void    activate_building   args( ( BUILDING_DATA *bld, bool on ) );
-void    check_prof  args( ( CHAR_DATA *ch ) );
-int count_users args( (OBJ_DATA *obj) );
-bool    remove_obj  args( ( CHAR_DATA *ch, int iWear, bool fReplace ) );
-int     get_trust       args( ( CHAR_DATA *ch               ) );
-void    my_get_age  args( ( CHAR_DATA *ch, char * buf       ) );
-int     my_get_hours    args( ( CHAR_DATA *ch, bool total ) );
-int     my_get_minutes  args( ( CHAR_DATA *ch, bool total ) );
-int     get_age         args( ( CHAR_DATA *ch ) );
-int     can_carry_n     args( ( CHAR_DATA *ch ) );
-int     can_carry_w     args( ( CHAR_DATA *ch ) );
-void    char_from_room  args( ( CHAR_DATA *ch ) );
-void    char_to_room    args( ( CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex ) );
-void    char_to_building args( ( CHAR_DATA *ch, BUILDING_DATA *bld ) );
-void    obj_to_char     args( ( OBJ_DATA *obj, CHAR_DATA *ch ) );
-void    obj_from_char   args( ( OBJ_DATA *obj ) );
-OD *    get_eq_char     args( ( CHAR_DATA *ch, int iWear ) );
-void    equip_char      args( ( CHAR_DATA *ch, OBJ_DATA *obj, int iWear ) );
-void    unequip_char    args( ( CHAR_DATA *ch, OBJ_DATA *obj ) );
-int     count_obj_list  args( ( OBJ_INDEX_DATA *obj, OBJ_DATA *list ) );
-int     count_obj_room  args( ( OBJ_INDEX_DATA *obj, OBJ_DATA *list ) );
-void    obj_from_room   args( ( OBJ_DATA *obj ) );
-void    obj_to_room     args( ( OBJ_DATA *obj, ROOM_INDEX_DATA *pRoomIndex ) );
-void    obj_to_obj      args( ( OBJ_DATA *obj, OBJ_DATA *obj_to ) );
-void    obj_from_obj    args( ( OBJ_DATA *obj ) );
-void    extract_obj     args( ( OBJ_DATA *obj ) );
-void    extract_building args( ( BUILDING_DATA *bld, bool msg ) );
-void    extract_vehicle args( ( VEHICLE_DATA *vhc, bool msg ) );
-void    extract_char    args( ( CHAR_DATA *ch, bool fPull ) );
-void    extract_queue   args( ( QUEUE_DATA *q ) );
-void    empty_queue	args( (CHAR_DATA *ch) );
-void    extract_pager   args( ( PAGER_DATA *p ) );
-BUILDING_DATA *    get_char_building   args( ( CHAR_DATA *ch ) );
-BUILDING_DATA *    get_obj_building    args( ( OBJ_DATA *obj ) );
-BUILDING_DATA *    get_building      args( ( int x, int y, int z ) );
-BUILDING_DATA *    get_building_range  args( ( int x, int y, int x2, int y2, int z ) );
-VEHICLE_DATA * get_vehicle_char     args( ( CHAR_DATA *ch, char *argument ) );
-VEHICLE_DATA *get_vehicle       args( ( char *argument, int x, int y, int z ) );
-VEHICLE_DATA *get_vehicle_world     args( ( char *argument ) );
-CD *    get_ch   args( ( char *argument ) );
-CD *    get_char_room   args( ( CHAR_DATA *ch, char *argument ) );
-CD *    get_char_world  args( ( CHAR_DATA *ch, char *argument ) );
-CD *    get_char_area   args( ( CHAR_DATA *ch, char *argument ) );
-CD *    get_char_loc      args( ( int x, int y, int z ) );
-OD *    get_obj_loc       args( ( CHAR_DATA *ch, char *argument, int x, int y ) );
-OD *    get_obj_type    args( ( OBJ_INDEX_DATA *pObjIndexData ) );
-OD *    get_obj_list    args( ( CHAR_DATA *ch, char *argument,
-                                OBJ_DATA *list ) );
-OD *    get_obj_room    args( ( CHAR_DATA *ch, char *argument,
-                                OBJ_DATA *list ) );
-OD *    get_obj_carry   args( ( CHAR_DATA *ch, char *argument ) );
-OD *    get_obj_wear    args( ( CHAR_DATA *ch, char *argument ) );
-OD *    get_obj_here    args( ( CHAR_DATA *ch, char *argument ) );
-OD *    get_obj_world   args( ( CHAR_DATA *ch, char *argument ) );
-int     get_obj_number  args( ( OBJ_DATA *obj ) );
-int     get_obj_weight  args( ( OBJ_DATA *obj           ) );
-bool    can_see         args( ( CHAR_DATA *ch, CHAR_DATA *victim ) );
-bool    can_see_obj     args( ( CHAR_DATA *ch, OBJ_DATA *obj    ) );
-bool    can_drop_obj    args( ( CHAR_DATA *ch, OBJ_DATA *obj    ) );
-bool    can_use         args( ( CHAR_DATA *ch, OBJ_DATA *obj    ) );
-char *  who_can_use     args( ( OBJ_DATA *obj           ) );
-void    info            args( ( char * message, int lv      ) );
-void    log_chan    args( ( const char * message, int lv    ) );
-CD   *  switch_char args( ( CHAR_DATA *victim, int mvnum, int poly_level ) );
-CD   *  unswitch_char   args( ( CHAR_DATA *ch           ) );
-void    monitor_chan    args( ( CHAR_DATA *ch, const char *message, int channel ) );
-CD   *  get_char        args( ( CHAR_DATA *ch ) );
-void char_reference args( (struct char_ref_type *ref) );
-void char_unreference   args( (CHAR_DATA **var) );
-void obj_reference  args( (struct obj_ref_type *ref) );
-void obj_unreference    args( (OBJ_DATA **var) );
-CHAR_DATA *get_rand_char args( ( int x, int y, int z ) );
-int get_random_planet   args( ( ) );
+void    activate_building   ( BUILDING_DATA *bld, bool on );
+void    check_prof  ( CHAR_DATA *ch );
+int count_users (OBJ_DATA *obj);
+bool    remove_obj  ( CHAR_DATA *ch, int iWear, bool fReplace );
+int     get_trust       ( CHAR_DATA *ch               );
+void    my_get_age  ( CHAR_DATA *ch, char * buf       );
+int     my_get_hours    ( CHAR_DATA *ch, bool total );
+int     my_get_minutes  ( CHAR_DATA *ch, bool total );
+int     get_age         ( CHAR_DATA *ch );
+int     can_carry_n     ( CHAR_DATA *ch );
+int     can_carry_w     ( CHAR_DATA *ch );
+void    char_from_room  ( CHAR_DATA *ch );
+void    char_to_room    ( CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex );
+void    char_to_building ( CHAR_DATA *ch, BUILDING_DATA *bld );
+void    obj_to_char     ( OBJ_DATA *obj, CHAR_DATA *ch );
+void    obj_from_char   ( OBJ_DATA *obj );
+OD *    get_eq_char     ( CHAR_DATA *ch, int iWear );
+void    equip_char      ( CHAR_DATA *ch, OBJ_DATA *obj, int iWear );
+void    unequip_char    ( CHAR_DATA *ch, OBJ_DATA *obj );
+int     count_obj_list  ( OBJ_INDEX_DATA *obj, OBJ_DATA *list );
+int     count_obj_room  ( OBJ_INDEX_DATA *obj, OBJ_DATA *list );
+void    obj_from_room   ( OBJ_DATA *obj );
+void    obj_to_room     ( OBJ_DATA *obj, ROOM_INDEX_DATA *pRoomIndex );
+void    obj_to_obj      ( OBJ_DATA *obj, OBJ_DATA *obj_to );
+void    obj_from_obj    ( OBJ_DATA *obj );
+void    extract_obj     ( OBJ_DATA *obj );
+void    extract_building ( BUILDING_DATA *bld, bool msg );
+void    extract_vehicle ( VEHICLE_DATA *vhc, bool msg );
+void    extract_char    ( CHAR_DATA *ch, bool fPull );
+void    extract_queue   ( QUEUE_DATA *q );
+void    empty_queue	(CHAR_DATA *ch);
+void    extract_pager   ( PAGER_DATA *p );
+BUILDING_DATA *    get_char_building   ( CHAR_DATA *ch );
+BUILDING_DATA *    get_obj_building    ( OBJ_DATA *obj );
+BUILDING_DATA *    get_building      ( int x, int y, int z );
+BUILDING_DATA *    get_building_range  ( int x, int y, int x2, int y2, int z );
+VEHICLE_DATA * get_vehicle_char     ( CHAR_DATA *ch, char *argument );
+VEHICLE_DATA *get_vehicle       ( char *argument, int x, int y, int z );
+VEHICLE_DATA *get_vehicle_world     ( char *argument );
+CD *    get_ch   ( char *argument );
+CD *    get_char_room   ( CHAR_DATA *ch, char *argument );
+CD *    get_char_world  ( CHAR_DATA *ch, char *argument );
+CD *    get_char_area   ( CHAR_DATA *ch, char *argument );
+CD *    get_char_loc      ( int x, int y, int z );
+OD *    get_obj_loc       ( CHAR_DATA *ch, char *argument, int x, int y );
+OD *    get_obj_type    ( OBJ_INDEX_DATA *pObjIndexData );
+OD *    get_obj_list    ( CHAR_DATA *ch, char *argument,
+                                OBJ_DATA *list );
+OD *    get_obj_room    ( CHAR_DATA *ch, char *argument,
+                                OBJ_DATA *list );
+OD *    get_obj_carry   ( CHAR_DATA *ch, char *argument );
+OD *    get_obj_wear    ( CHAR_DATA *ch, char *argument );
+OD *    get_obj_here    ( CHAR_DATA *ch, char *argument );
+OD *    get_obj_world   ( CHAR_DATA *ch, char *argument );
+int     get_obj_number  ( OBJ_DATA *obj );
+int     get_obj_weight  ( OBJ_DATA *obj           );
+bool    can_see         ( CHAR_DATA *ch, CHAR_DATA *victim );
+bool    can_see_obj     ( CHAR_DATA *ch, OBJ_DATA *obj    );
+bool    can_drop_obj    ( CHAR_DATA *ch, OBJ_DATA *obj    );
+bool    can_use         ( CHAR_DATA *ch, OBJ_DATA *obj    );
+char *  who_can_use     ( OBJ_DATA *obj           );
+void    info            ( char * message, int lv      );
+void    log_chan    ( const char * message, int lv    );
+CD   *  switch_char ( CHAR_DATA *victim, int mvnum, int poly_level );
+CD   *  unswitch_char   ( CHAR_DATA *ch           );
+void    monitor_chan    ( CHAR_DATA *ch, const char *message, int channel );
+CD   *  get_char        ( CHAR_DATA *ch );
+void char_reference (struct char_ref_type *ref);
+void char_unreference   (CHAR_DATA **var);
+void obj_reference  (struct obj_ref_type *ref);
+void obj_unreference    (OBJ_DATA **var);
+CHAR_DATA *get_rand_char ( int x, int y, int z );
+int get_random_planet   ( );
 
 /* interp.c */
-void    interpret       args( ( CHAR_DATA *ch, char *argument )   );
-bool    is_number       args( ( char *arg )                       );
-bool    check_social    args( ( CHAR_DATA *ch, char *command, char *argument ) );
-void    add_to_queue    args( ( CHAR_DATA *ch, char *argument ) );
-void    check_queue args( ( CHAR_DATA *ch ) );
+void    interpret       ( CHAR_DATA *ch, char *argument );
+bool    is_number       ( char *arg );
+bool    check_social    ( CHAR_DATA *ch, char *command, char *argument );
+void    add_to_queue    ( CHAR_DATA *ch, char *argument );
+void    check_queue ( CHAR_DATA *ch );
 
 // logs.c
-void        load_changes        args( ( void ) );
-void        save_changes        args( ( void ) );
-void        delete_change       args( ( int num ) );
-char    *   current_date        args( ( void ) );
-int         num_changes         args( ( void ) );
-void        load_logs           args( ( void ) );
-void        save_logs           args( ( void ) );
+void        load_changes        ( void );
+void        save_changes        ( void );
+void        delete_change       ( int num );
+char    *   current_date        ( void );
+int         num_changes         ( void );
+void        load_logs           ( void );
+void        save_logs           ( void );
 
 /* macros.c */
-void clear_basic    args( ( CHAR_DATA *ch ) );
-int  count_buildings    args( ( CHAR_DATA *victim ) );
-bool hidden     args( ( CHAR_DATA *victim ) );
-bool open_bld       args( ( BUILDING_DATA *bld ) );
-bool has_ability    args( ( CHAR_DATA *ch, int abil ) );
-bool open_scaffold  args( (CHAR_DATA *ch, OBJ_DATA *obj) );
-OBJ_DATA * make_quest_base args( ( int type, int size, int z ) );
-void reset_building args( ( BUILDING_DATA *bld, int type ) );
-void reset_special_building args( (BUILDING_DATA *bld) );
-bool    ok_to_use   args( ( CHAR_DATA *ch, int value    ) );
-void create_blueprint   args( ( BUILDING_DATA *bld ) );
-bool complete       args( ( BUILDING_DATA *bld ) );
-bool is_upgrade     args( ( int type ) );
-bool is_neutral     args( ( int type ) );
-bool is_evil        args( ( BUILDING_DATA *bld ) );
-int get_char_cost   args( ( CHAR_DATA *ch ) );
-bool IS_BETWEEN     args( ( int x, int x1, int x2 ) );
-bool building_can_shoot args( ( BUILDING_DATA *bld, CHAR_DATA *ch, int range ) );
-int  get_rank       args( ( CHAR_DATA *ch ) );
-int  get_bit_value  args( ( int bit ) );
+void clear_basic    ( CHAR_DATA *ch );
+int  count_buildings    ( CHAR_DATA *victim );
+bool hidden     ( CHAR_DATA *victim );
+bool open_bld       ( BUILDING_DATA *bld );
+bool has_ability    ( CHAR_DATA *ch, int abil );
+bool open_scaffold  (CHAR_DATA *ch, OBJ_DATA *obj);
+OBJ_DATA * make_quest_base ( int type, int size, int z );
+void reset_building ( BUILDING_DATA *bld, int type );
+void reset_special_building (BUILDING_DATA *bld);
+bool    ok_to_use   ( CHAR_DATA *ch, int value    );
+void create_blueprint   ( BUILDING_DATA *bld );
+bool complete       ( BUILDING_DATA *bld );
+bool is_upgrade     ( int type );
+bool is_neutral     ( int type );
+bool is_evil        ( BUILDING_DATA *bld );
+int get_char_cost   ( CHAR_DATA *ch );
+bool IS_BETWEEN     ( int x, int x1, int x2 );
+bool building_can_shoot ( BUILDING_DATA *bld, CHAR_DATA *ch, int range );
+int  get_rank       ( CHAR_DATA *ch );
+int  get_bit_value  ( int bit );
 OBJ_DATA *create_material( int type );
 VEHICLE_DATA *get_vehicle_from_vehicle( VEHICLE_DATA *vhc );
 OBJ_DATA *create_teleporter( BUILDING_DATA *bld, int range );
 OBJ_DATA *create_locator( int range );
-bool sneak      args( ( CHAR_DATA *ch ) );
-void check_building_destroyed args( (BUILDING_DATA *bld) );
-int get_item_limit  args( ( BUILDING_DATA *bld ) );
+bool sneak      ( CHAR_DATA *ch );
+void check_building_destroyed (BUILDING_DATA *bld);
+int get_item_limit  ( BUILDING_DATA *bld );
 OBJ_DATA *create_element( int type );
-void send_warning   args( ( CHAR_DATA *ch, BUILDING_DATA *bld, CHAR_DATA *victim ) );
-void update_ranks   args( ( CHAR_DATA *ch ) );
-bool defense_building   args( ( BUILDING_DATA *bld ) );
-void sendsound      args( ( CHAR_DATA *ch, char *file, int V, int I, int P, char *T, char *filename ) );
-int check_dodge     args( ( CHAR_DATA *ch, int chance ) );
-bool in_range       args(( CHAR_DATA *ch, CHAR_DATA *victim, int range ));
-int get_ship_range  args( ( VEHICLE_DATA *vhc ) );
-int get_ship_weapon_range   args( ( VEHICLE_DATA *vhc ) );
-bool ok_moon        args( ( int sec ) );
-void make_medal_base    args( ( CHAR_DATA *ch ) );
-void create_obj_atch    args( ( CHAR_DATA *ch, int index ) );
-bool blind_spot     args( ( CHAR_DATA *ch, int x, int y ) );
-int get_armor_value args( ( int dt ) );
+void send_warning   ( CHAR_DATA *ch, BUILDING_DATA *bld, CHAR_DATA *victim );
+void update_ranks   ( CHAR_DATA *ch );
+bool defense_building   ( BUILDING_DATA *bld );
+void sendsound      ( CHAR_DATA *ch, char *file, int V, int I, int P, char *T, char *filename );
+int check_dodge     ( CHAR_DATA *ch, int chance );
+bool in_range       ( CHAR_DATA *ch, CHAR_DATA *victim, int range );
+int get_ship_range  ( VEHICLE_DATA *vhc );
+int get_ship_weapon_range   ( VEHICLE_DATA *vhc );
+bool ok_moon        ( int sec );
+void make_medal_base    ( CHAR_DATA *ch );
+void create_obj_atch    ( CHAR_DATA *ch, int index );
+bool blind_spot     ( CHAR_DATA *ch, int x, int y );
+int get_armor_value ( int dt );
 void real_coords(int *x,int *y);
 void real_coords_space(int *x,int *y);
 bool in_range_of(int x1, int y1, int x2, int y2, int range);
@@ -1184,62 +1180,62 @@ bool in_range_of(int x1, int y1, int x2, int y2, int range);
 /*------*\ 
 ) save.c (
 \*------*/
-void    save_char_obj   args( ( CHAR_DATA *ch ) );
-bool    load_char_obj   args( ( DESCRIPTOR_DATA *d, char *name, bool system_call ) );
-void    save_objects    args( ( int mode ) );
-void    save_map    args( ( void ) );
-void    save_buildings  args( ( void ) );
-void    save_vehicles   args( ( int mode ) );
-void    save_scores args( ( void ) );
-void    save_ranks  args( ( void ) );
-void    save_multiplay  args( ( void ) );
-void    save_planets    args( ( void ) );
-void    fread_object    args( ( FILE * fp ) );
-void    save_bans   args( ( void ) );
-char    *initial    args( ( const char *str ) );
-void   save_buildings_b args( ( int mode ) );
-void    save_alliances  args( ( void ) );
-void    save_building_table args( ( void ) );
+void    save_char_obj   ( CHAR_DATA *ch );
+bool    load_char_obj   ( DESCRIPTOR_DATA *d, char *name, bool system_call );
+void    save_objects    ( int mode );
+void    save_map    ( void );
+void    save_buildings  ( void );
+void    save_vehicles   ( int mode );
+void    save_scores ( void );
+void    save_ranks  ( void );
+void    save_multiplay  ( void );
+void    save_planets    ( void );
+void    fread_object    ( FILE * fp );
+void    save_bans   ( void );
+char    *initial    ( const char *str );
+void   save_buildings_b ( int mode );
+void    save_alliances  ( void );
+void    save_building_table ( void );
 
 /* social-edit.c  */
 
-void load_social_table  args(  ( void )  );
+void load_social_table  ( void );
 
 /*---------*\ 
 ) trigger.c (
 \*---------*/
 
-void    trigger_handler args( ( CHAR_DATA *ch, OBJ_DATA *obj, int trigger ) );
+void    trigger_handler ( CHAR_DATA *ch, OBJ_DATA *obj, int trigger );
 
 /*--------*\ 
 ) update.c# (
 \*--------*/
-int get_user_seconds args(());
-void    explode     args( ( OBJ_DATA *obj ) );
-void    update_handler  args( ( void )                                );
-void    rooms_update    args( ( void ) );
-void    building_update args( ( void ) );
-void    init_alarm_handler args(  ( void ) );
-void    alarm_update args( ( void ) );
-void    building_update args( ( void ) );
+int get_user_seconds ();
+void    explode     ( OBJ_DATA *obj );
+void    update_handler  ( void );
+void    rooms_update    ( void );
+void    building_update ( void );
+void    init_alarm_handler ( void );
+void    alarm_update ( void );
+void    building_update ( void );
 
 /* write.c */
-void    write_start     args( ( char ** dest, void * retfunc, void * retparm, CHAR_DATA * ch ) );
-void    write_interpret args( ( CHAR_DATA * ch, char * argument ) );
+void    write_start     ( char ** dest, void * retfunc, void * retparm, CHAR_DATA * ch );
+void    write_interpret ( CHAR_DATA * ch, char * argument );
 
 /* build.c */
 void  build_strdup(char ** dest,char * src,bool freesrc,CHAR_DATA * ch);
 char * build_simpstrdup( char * buf);                       /* A plug in alternative to str_dup */
-void build_save args( ( void ) );
+void build_save ( void );
 extern const char * cDirs;
 int  get_dir(char);
 char * show_values( const struct lookup_type * table, int value, bool fBit );
 
 /* buildtab.c  */
 /*
-int table_lookup	args( (const struct lookup_type * table,char * name) );
-char * rev_table_lookup	args( (const struct lookup_type * table,int number) );
-char * bit_table_lookup	args( (const struct lookup_type * table,int number) );
+int table_lookup	(const struct lookup_type * table,char * name);
+char * rev_table_lookup	(const struct lookup_type * table,int number);
+char * bit_table_lookup	(const struct lookup_type * table,int number);
 */
 
 /* buildare.c */
@@ -1254,14 +1250,14 @@ void area_modified(AREA_DATA *);
 void build_save_flush(void);
 
 /*    SSM   */
-void temp_fread_string  args( (FILE * fp, char *buf) );
-void save_brands    args( ( void ) );
+void temp_fread_string  (FILE * fp, char *buf);
+void save_brands    ( void );
 
 /*
  *  sysdat.c
  */
-void load_sysdata   args( ( void ) );
-void save_sysdata   args( ( void ) );
+void load_sysdata   ( void );
+void save_sysdata   ( void );
 
 // MCCP
 /*
@@ -1281,35 +1277,35 @@ int count_mxp_tags (const int bMXP, const char *txt, int length);
 void turn_on_mxp (DESCRIPTOR_DATA *d);
 
 // act_misc.c
-void respawn_buildings args( (CHAR_DATA *ch) );
-int get_loc args( ( char *loc ) );
-bool can_build args( ( int type, int sect, int planet ) );
-int parse_direction args( ( CHAR_DATA *ch, char *arg ) );
+void respawn_buildings (CHAR_DATA *ch);
+int get_loc ( char *loc );
+bool can_build ( int type, int sect, int planet );
+int parse_direction ( CHAR_DATA *ch, char *arg );
 
 // act_alliance.c
-void    do_pipe                 args( ( CHAR_DATA *ch, char *argument ) );
+void    do_pipe                 ( CHAR_DATA *ch, char *argument );
 
-bool    upgradable      args( ( BUILDING_DATA *bld ) );
+bool    upgradable      ( BUILDING_DATA *bld );
 
-void    quest_update    args( ( void ) );
+void    quest_update    ( void );
 void draw_space( CHAR_DATA *ch );
 
 // terrain.c
-void create_map args( ( CHAR_DATA *ch, int type ) );
-void create_special_map args( ( void ) );
-void make_lava_river    args( (int x, int y, int z) );
-void init_fields    args( ( void ) );
+void create_map ( CHAR_DATA *ch, int type );
+void create_special_map ( void );
+void make_lava_river    (int x, int y, int z);
+void init_fields    ( void );
 
 // games.c
-void nuke_blow args( ( CHAR_DATA *ch ) );
+void nuke_blow ( CHAR_DATA *ch );
 
 //buildings.c
-bool check_missile_defense args( (OBJ_DATA *obj) );
+bool check_missile_defense (OBJ_DATA *obj);
 
 //web.c
-void update_web_data    args( ( int type, char *value ) );
-void generate_webpage   args( ( void ) );
-void load_web_data  args( ( void ) );
+void update_web_data    ( int type, char *value );
+void generate_webpage   ( void );
+void load_web_data  ( void );
 
 #undef  CD
 #undef  MID

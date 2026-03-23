@@ -75,8 +75,8 @@ const   sh_int  movement_loss   [SECT_MAX]      =
 /*
  * Local functions.
  */
-int     find_door       args( ( CHAR_DATA *ch, char *arg ) );
-bool    has_key         args( ( CHAR_DATA *ch, int key ) );
+int     find_door       ( CHAR_DATA *ch, char *arg );
+bool    has_key         ( CHAR_DATA *ch, int key );
 /*
 struct fol_data
 {

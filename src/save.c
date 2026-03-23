@@ -41,7 +41,7 @@
 #include "hash.h"
 
 #if !defined(macintosh)
-extern  int     _filbuf         args( (FILE *) );
+extern  int     _filbuf         (FILE *);
 #endif
 
 #define SAVE_REVISION 52
@@ -67,16 +67,16 @@ static  OBJ_DATA *      rgObjNest       [MAX_NEST];
 /*
  * Local functions.
  */
-void    fwrite_building args( ( BUILDING_DATA *bld,  FILE *fp ) );
-void    fwrite_vehicle  args( ( VEHICLE_DATA *vhc,  FILE *fp ) );
-void    fwrite_char     args( ( CHAR_DATA *ch,  FILE *fp ) );
-void    fwrite_obj      args( ( CHAR_DATA *ch,  OBJ_DATA  *obj,
-                                FILE *fp, int iNest ) );
-void    fwrite_vhc      args( ( VEHICLE_DATA *vhc,  FILE *fp ) );
-void    fread_char      args( ( CHAR_DATA *ch,  FILE *fp ) );
-void    fread_obj       args( ( CHAR_DATA *ch,  FILE *fp ) );
-void    fread_object    args( ( FILE *fp ) );
-VEHICLE_DATA * fread_vhc args( ( CHAR_DATA *ch, FILE *fp ) );
+void    fwrite_building ( BUILDING_DATA *bld,  FILE *fp );
+void    fwrite_vehicle  ( VEHICLE_DATA *vhc,  FILE *fp );
+void    fwrite_char     ( CHAR_DATA *ch,  FILE *fp );
+void    fwrite_obj      ( CHAR_DATA *ch,  OBJ_DATA  *obj,
+                                FILE *fp, int iNest );
+void    fwrite_vhc      ( VEHICLE_DATA *vhc,  FILE *fp );
+void    fread_char      ( CHAR_DATA *ch,  FILE *fp );
+void    fread_obj       ( CHAR_DATA *ch,  FILE *fp );
+void    fread_object    ( FILE *fp );
+VEHICLE_DATA * fread_vhc ( CHAR_DATA *ch, FILE *fp );
 
 void abort_wrapper(void);
 

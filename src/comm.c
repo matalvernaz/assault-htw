@@ -76,9 +76,9 @@
 
 #if defined(MALLOC_DEBUG)
 #include <malloc.h>
-extern int malloc_debug args( ( int ) );
+extern int malloc_debug ( int );
 
-extern int malloc_verify args( ( void ) );
+extern int malloc_verify ( void );
 #endif
 
 /*
@@ -148,34 +148,34 @@ const unsigned char dont_mxp_str[] = { IAC, DONT, TELOPT_MXP, '\0' };
  */
 #if     defined(_AIX)
 #include <sys/select.h>
-int accept args( ( int s, struct sockaddr *addr, int *addrlen ) );
-int bind args( ( int s, struct sockaddr *name, int namelen ) );
-void bzero args( ( char *b, int length ) );
-int getpeername args( ( int s, struct sockaddr *name, int *namelen ) );
-int getsockname args( ( int s, struct sockaddr *name, int *namelen ) );
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
-int listen args( ( int s, int backlog ) );
-int setsockopt args( ( int s, int level, int optname, void *optval,
-				int optlen ) );
-int socket args( ( int domain, int type, int protocol ) );
+int accept ( int s, struct sockaddr *addr, int *addrlen );
+int bind ( int s, struct sockaddr *name, int namelen );
+void bzero ( char *b, int length );
+int getpeername ( int s, struct sockaddr *name, int *namelen );
+int getsockname ( int s, struct sockaddr *name, int *namelen );
+int gettimeofday ( struct timeval *tp, struct timezone *tzp );
+int listen ( int s, int backlog );
+int setsockopt ( int s, int level, int optname, void *optval,
+				int optlen );
+int socket ( int domain, int type, int protocol );
 #endif
 
 #if     defined(apollo)
 #include <unistd.h>
-void bzero args( ( char *b, int length ) );
+void bzero ( char *b, int length );
 #endif
 
 #if     defined(__hpux)
-int accept args( ( int s, void *addr, int *addrlen ) );
-int bind args( ( int s, const void *addr, int addrlen ) );
-void bzero args( ( char *b, int length ) );
-int getpeername args( ( int s, void *addr, int *addrlen ) );
-int getsockname args( ( int s, void *name, int *addrlen ) );
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
-int listen args( ( int s, int backlog ) );
-int setsockopt args( ( int s, int level, int optname,
-				const void *optval, int optlen ) );
-int socket args( ( int domain, int type, int protocol ) );
+int accept ( int s, void *addr, int *addrlen );
+int bind ( int s, const void *addr, int addrlen );
+void bzero ( char *b, int length );
+int getpeername ( int s, void *addr, int *addrlen );
+int getsockname ( int s, void *name, int *addrlen );
+int gettimeofday ( struct timeval *tp, struct timezone *tzp );
+int listen ( int s, int backlog );
+int setsockopt ( int s, int level, int optname,
+				const void *optval, int optlen );
+int socket ( int domain, int type, int protocol );
 #endif
 
 #if     defined(interactive)
@@ -185,23 +185,23 @@ int socket args( ( int domain, int type, int protocol ) );
 
 #if     defined(linux)
 /* taken out for imc2 0.9 beta 3
- int     accept          args( ( int s, struct sockaddr *addr, int *addrlen ) );
- int     bind            args( ( int s, struct sockaddr *name, int namelen ) );
+ int     accept          ( int s, struct sockaddr *addr, int *addrlen );
+ int     bind            ( int s, struct sockaddr *name, int namelen );
  */
-int close args( ( int fd ) );
+int close ( int fd );
 /*
- int     getpeername     args( ( int s, struct sockaddr *name, int *namelen ) );
- int     getsockname     args( ( int s, struct sockaddr *name, int *namelen ) );
+ int     getpeername     ( int s, struct sockaddr *name, int *namelen );
+ int     getsockname     ( int s, struct sockaddr *name, int *namelen );
  */
-/* int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) ); */
+/* int gettimeofday ( struct timeval *tp, struct timezone *tzp ); */
 /*
- int     listen          args( ( int s, int backlog ) );
+ int     listen          ( int s, int backlog );
  */
-/*int     read            args( ( int fd, char *buf, int nbyte ) );*/
-int select args( ( int width, fd_set *readfds, fd_set *writefds,
-				fd_set *exceptfds, struct timeval *timeout ) );
-int socket args( ( int domain, int type, int protocol ) );
-/*int     write           args( ( int fd, char *buf, int nbyte ) );*/
+/*int     read            ( int fd, char *buf, int nbyte );*/
+int select ( int width, fd_set *readfds, fd_set *writefds,
+				fd_set *exceptfds, struct timeval *timeout );
+int socket ( int domain, int type, int protocol );
+/*int     write           ( int fd, char *buf, int nbyte );*/
 #endif
 
 #if     defined(macintosh)
@@ -219,7 +219,7 @@ struct timeval
 static long theKeys [4];
 
 int gettimeofday
-args( ( struct timeval *tp, void *tzp ) );
+( struct timeval *tp, void *tzp );
 #endif
 
 #if     defined(MIPS_OS)
@@ -227,47 +227,47 @@ extern int errno;
 #endif
 
 #if     defined(MSDOS)
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
-int kbhit args( ( void ) );
+int gettimeofday ( struct timeval *tp, struct timezone *tzp );
+int kbhit ( void );
 #endif
 
 #if     defined(NeXT)
-int close args( ( int fd ) );
-int fcntl args( ( int fd, int cmd, int arg ) );
+int close ( int fd );
+int fcntl ( int fd, int cmd, int arg );
 #if     !defined(htons)
-u_short htons args( ( u_short hostshort ) );
+u_short htons ( u_short hostshort );
 #endif
 #if     !defined(ntohl)
-u_long ntohl args( ( u_long hostlong ) );
+u_long ntohl ( u_long hostlong );
 #endif
-int read args( ( int fd, char *buf, int nbyte ) );
-int select args( ( int width, fd_set *readfds, fd_set *writefds,
-				fd_set *exceptfds, struct timeval *timeout ) );
-int write args( ( int fd, char *buf, int nbyte ) );
+int read ( int fd, char *buf, int nbyte );
+int select ( int width, fd_set *readfds, fd_set *writefds,
+				fd_set *exceptfds, struct timeval *timeout );
+int write ( int fd, char *buf, int nbyte );
 #endif
 
 #if     defined(sequent)
-int accept args( ( int s, struct sockaddr *addr, int *addrlen ) );
-int bind args( ( int s, struct sockaddr *name, int namelen ) );
-int close args( ( int fd ) );
-int fcntl args( ( int fd, int cmd, int arg ) );
-int getpeername args( ( int s, struct sockaddr *name, int *namelen ) );
-int getsockname args( ( int s, struct sockaddr *name, int *namelen ) );
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
+int accept ( int s, struct sockaddr *addr, int *addrlen );
+int bind ( int s, struct sockaddr *name, int namelen );
+int close ( int fd );
+int fcntl ( int fd, int cmd, int arg );
+int getpeername ( int s, struct sockaddr *name, int *namelen );
+int getsockname ( int s, struct sockaddr *name, int *namelen );
+int gettimeofday ( struct timeval *tp, struct timezone *tzp );
 #if     !defined(htons)
-u_short htons args( ( u_short hostshort ) );
+u_short htons ( u_short hostshort );
 #endif
-int listen args( ( int s, int backlog ) );
+int listen ( int s, int backlog );
 #if     !defined(ntohl)
-u_long ntohl args( ( u_long hostlong ) );
+u_long ntohl ( u_long hostlong );
 #endif
-int read args( ( int fd, char *buf, int nbyte ) );
-int select args( ( int width, fd_set *readfds, fd_set *writefds,
-				fd_set *exceptfds, struct timeval *timeout ) );
-int setsockopt args( ( int s, int level, int optname, caddr_t optval,
-				int optlen ) );
-int socket args( ( int domain, int type, int protocol ) );
-int write args( ( int fd, char *buf, int nbyte ) );
+int read ( int fd, char *buf, int nbyte );
+int select ( int width, fd_set *readfds, fd_set *writefds,
+				fd_set *exceptfds, struct timeval *timeout );
+int setsockopt ( int s, int level, int optname, caddr_t optval,
+				int optlen );
+int socket ( int domain, int type, int protocol );
+int write ( int fd, char *buf, int nbyte );
 #endif
 
 /*
@@ -275,50 +275,50 @@ int write args( ( int fd, char *buf, int nbyte ) );
  */
 
 #if defined(sun)
-int accept args( ( int s, struct sockaddr *addr, int *addrlen ) );
-int bind args( ( int s, struct sockaddr *name, int namelen ) );
-void bzero args( ( char *b, int length ) );
-int close args( ( int fd ) );
-int getpeername args( ( int s, struct sockaddr *name, int *namelen ) );
-int getsockname args( ( int s, struct sockaddr *name, int *namelen ) );
+int accept ( int s, struct sockaddr *addr, int *addrlen );
+int bind ( int s, struct sockaddr *name, int namelen );
+void bzero ( char *b, int length );
+int close ( int fd );
+int getpeername ( int s, struct sockaddr *name, int *namelen );
+int getsockname ( int s, struct sockaddr *name, int *namelen );
 #if defined(SYSV)
-int gettimeofday args( ( struct timeval *tp, void *tzp ) );
+int gettimeofday ( struct timeval *tp, void *tzp );
 #else
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
+int gettimeofday ( struct timeval *tp, struct timezone *tzp );
 #endif
-int listen args( ( int s, int backlog ) );
-int select args( ( int width, fd_set *readfds, fd_set *writefds,
-				fd_set *exceptfds, struct timeval *timeout ) );
+int listen ( int s, int backlog );
+int select ( int width, fd_set *readfds, fd_set *writefds,
+				fd_set *exceptfds, struct timeval *timeout );
 #if defined(SYSV)
-int setsockopt args( ( int s, int level, int optname,
-				const char *optval, int optlen ) );
-ssize_t read args( ( int fd, void *buf, unsigned nbyte ) );
-ssize_t write args( ( int fd, const void *buf, unsigned nbyte ) );
+int setsockopt ( int s, int level, int optname,
+				const char *optval, int optlen );
+ssize_t read ( int fd, void *buf, unsigned nbyte );
+ssize_t write ( int fd, const void *buf, unsigned nbyte );
 #else
-int setsockopt args( ( int s, int level, int optname, void *optval,
-				int optlen ) );
-int read args( ( int fd, char *buf, int nbyte ) );
-int write args( ( int fd, char *buf, int nbyte ) );
+int setsockopt ( int s, int level, int optname, void *optval,
+				int optlen );
+int read ( int fd, char *buf, int nbyte );
+int write ( int fd, char *buf, int nbyte );
 #endif
-int socket args( ( int domain, int type, int protocol ) );
+int socket ( int domain, int type, int protocol );
 #endif
 
 #if defined(ultrix)
-int accept args( ( int s, struct sockaddr *addr, int *addrlen ) );
-int bind args( ( int s, struct sockaddr *name, int namelen ) );
-void bzero args( ( char *b, int length ) );
-int close args( ( int fd ) );
-int getpeername args( ( int s, struct sockaddr *name, int *namelen ) );
-int getsockname args( ( int s, struct sockaddr *name, int *namelen ) );
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
-int listen args( ( int s, int backlog ) );
-int read args( ( int fd, char *buf, int nbyte ) );
-int select args( ( int width, fd_set *readfds, fd_set *writefds,
-				fd_set *exceptfds, struct timeval *timeout ) );
-int setsockopt args( ( int s, int level, int optname, void *optval,
-				int optlen ) );
-int socket args( ( int domain, int type, int protocol ) );
-int write args( ( int fd, char *buf, int nbyte ) );
+int accept ( int s, struct sockaddr *addr, int *addrlen );
+int bind ( int s, struct sockaddr *name, int namelen );
+void bzero ( char *b, int length );
+int close ( int fd );
+int getpeername ( int s, struct sockaddr *name, int *namelen );
+int getsockname ( int s, struct sockaddr *name, int *namelen );
+int gettimeofday ( struct timeval *tp, struct timezone *tzp );
+int listen ( int s, int backlog );
+int read ( int fd, char *buf, int nbyte );
+int select ( int width, fd_set *readfds, fd_set *writefds,
+				fd_set *exceptfds, struct timeval *timeout );
+int setsockopt ( int s, int level, int optname, void *optval,
+				int optlen );
+int socket ( int domain, int type, int protocol );
+int write ( int fd, char *buf, int nbyte );
 #endif
 
 /*
@@ -366,44 +366,44 @@ int control2;
  * OS-dependent local functions.
  */
 #if defined(macintosh) || defined(MSDOS)
-void game_loop_mac_msdos args( ( void ) );
-bool read_from_descriptor args( ( DESCRIPTOR_DATA *d ) );
+void game_loop_mac_msdos ( void );
+bool read_from_descriptor ( DESCRIPTOR_DATA *d );
 // MCCP
-bool write_to_descriptor args( ( DESCRIPTOR_DATA *d, char *txt, int length ) );
-bool write_to_descriptor_2 args( ( int desc, char *txt, int length ) );
-//bool    write_to_descriptor     args( ( int desc, char *txt, int length ) );
+bool write_to_descriptor ( DESCRIPTOR_DATA *d, char *txt, int length );
+bool write_to_descriptor_2 ( int desc, char *txt, int length );
+//bool    write_to_descriptor     ( int desc, char *txt, int length );
 // End MCCP
 #endif
 
 #if defined(unix)
-void game_loop_unix args( ( int control ) );
-int init_socket args( ( int port ) );
-void new_descriptor args( ( int control ) );
-bool read_from_descriptor args( ( DESCRIPTOR_DATA *d ) );
+void game_loop_unix ( int control );
+int init_socket ( int port );
+void new_descriptor ( int control );
+bool read_from_descriptor ( DESCRIPTOR_DATA *d );
 // MCCP
-bool write_to_descriptor args( ( DESCRIPTOR_DATA *d, char *txt, int length ) );
-bool write_to_descriptor_2 args( ( int desc, char *txt, int length ) );
-//bool    write_to_descriptor     args( ( int desc, char *txt, int length ) );
+bool write_to_descriptor ( DESCRIPTOR_DATA *d, char *txt, int length );
+bool write_to_descriptor_2 ( int desc, char *txt, int length );
+//bool    write_to_descriptor     ( int desc, char *txt, int length );
 // End MCCP
-void init_descriptor args( ( DESCRIPTOR_DATA *dnew, int desc ) );
+void init_descriptor ( DESCRIPTOR_DATA *dnew, int desc );
 #endif
 
-void talktoimms args( ( DESCRIPTOR_DATA *d, char *argument ) );
+void talktoimms ( DESCRIPTOR_DATA *d, char *argument );
 
 /*
  * Other local functions (OS-independent).
  */
-bool check_parse_name args( ( char *name ) );
-bool check_reconnect args( ( DESCRIPTOR_DATA *d, char *name,
-				bool fConn ) );
-bool check_playing args( ( DESCRIPTOR_DATA *d, char *name ) );
-int main args( ( int argc, char **argv ) );
-void nanny args( ( DESCRIPTOR_DATA *d, char *argument ) );
-bool process_output args( ( DESCRIPTOR_DATA *d, bool fPrompt ) );
-void read_from_buffer args( ( DESCRIPTOR_DATA *d ) );
-void stop_idling args( ( CHAR_DATA *ch ) );
-void bust_a_prompt args( ( DESCRIPTOR_DATA *d ) );
-void free_desc args( ( DESCRIPTOR_DATA *d ) );
+bool check_parse_name ( char *name );
+bool check_reconnect ( DESCRIPTOR_DATA *d, char *name,
+				bool fConn );
+bool check_playing ( DESCRIPTOR_DATA *d, char *name );
+int main ( int argc, char **argv );
+void nanny ( DESCRIPTOR_DATA *d, char *argument );
+bool process_output ( DESCRIPTOR_DATA *d, bool fPrompt );
+void read_from_buffer ( DESCRIPTOR_DATA *d );
+void stop_idling ( CHAR_DATA *ch );
+void bust_a_prompt ( DESCRIPTOR_DATA *d );
+void free_desc ( DESCRIPTOR_DATA *d );
 
 /*+*/int global_port;
 

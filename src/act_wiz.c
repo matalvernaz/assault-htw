@@ -55,7 +55,7 @@ struct system_data rlvldata;
 
 DECLARE_DO_FUN(do_gitpull);
 
-void  purge_room   args( ( CHAR_DATA *, ROOM_INDEX_DATA * ) );
+void  purge_room   ( CHAR_DATA *, ROOM_INDEX_DATA * );
 RELEVEL_DATA * HasRelevel( char * strName )
 {
     RELEVEL_DATA * pRelevel = NULL;

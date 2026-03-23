@@ -44,7 +44,7 @@
 
 // All the map-generating code goes here
 
-void create_full_map args( ( CHAR_DATA *ch ) );
+void create_full_map ( CHAR_DATA *ch );
 void create_map(CHAR_DATA *ch, int type) {
 	if (type == TERRAIN_BALANCED)
 		create_full_map(ch);
