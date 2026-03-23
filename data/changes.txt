@@ -1,4 +1,49 @@
-1
+10
+Added base command - shows a dashboard of all your owned buildings with HP, shield, virus status, and coordinates~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Added salvage command - harvest resources from burned/ash/lava terrain, with a 5 minute cooldown~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Added bounty command - spend QP to place a bounty on another player; killer collects it~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Added exploration achievements - first time entering each terrain type awards 5 QP and a message~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+New players now receive a starter kit of iron, rock, and copper on first login~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Extended wizhelp so that 'wizhelp <command>' shows trust level, position, and the full help entry~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Added help files for base, salvage, bounty, exploration, and 40+ wizard commands~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Fixed several security issues: hotreboot buffer overflow, strcpy to snprintf in network code~
+Fucker~
+Mar 23, 2026~
+1774296115
+
+Fixed compiler warnings across the codebase (restrict violations, unused vars, pointer comparisons, real bugs); enabled -Werror~
+Fucker~
+Mar 23, 2026~
+1774296115
+
 improved this old thing with AI so it mostly works~
 Fucker~
 Mar 22, 2026~
