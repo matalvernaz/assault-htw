@@ -287,6 +287,85 @@ BUILDING_DATA *ai_place_building( AI_FACTION *fac, int type, int x, int y, int z
 }
 
 /*
+ * ai_find_faction_location - pick a good map location for a new faction base.
+ *
+ * Criteria (all must pass):
+ *   - On z=1 (ground), at least 50 cells from the map edge
+ *   - Terrain is buildable for HQ at that cell
+ *   - At least 2 nearby cells (within radius 3) buildable for turrets
+ *   - At least AI_MIN_FACTION_DIST cells (Manhattan) from every other AI HQ
+ *
+ * Tries AI_PLACEMENT_ATTEMPTS random locations before giving up.
+ * Returns TRUE and sets ox/oy/oz on success.
+ */
+#define AI_PLACEMENT_ATTEMPTS   300
+#define AI_MIN_FACTION_DIST     150
+#define AI_MAP_MARGIN            50
+
+bool ai_find_faction_location( int *ox, int *oy, int *oz )
+{
+    int attempt, x, y;
+    int z = 1;  /* Z_GROUND */
+
+    for ( attempt = 0; attempt < AI_PLACEMENT_ATTEMPTS; attempt++ )
+    {
+        x = number_range( AI_MAP_MARGIN, MAX_MAPS - AI_MAP_MARGIN - 1 );
+        y = number_range( AI_MAP_MARGIN, MAX_MAPS - AI_MAP_MARGIN - 1 );
+
+        /* Cell must be free and buildable for HQ */
+        if ( map_bld[x][y][z] != NULL )
+            continue;
+        if ( !can_build( BUILDING_HQ, map_table.type[x][y][z], z ) )
+            continue;
+
+        /* Need at least 2 nearby free buildable cells for turrets */
+        int free_cells = 0, dx, dy;
+        for ( dx = -3; dx <= 3 && free_cells < 2; dx++ )
+        {
+            for ( dy = -3; dy <= 3 && free_cells < 2; dy++ )
+            {
+                if ( dx == 0 && dy == 0 )
+                    continue;
+                int nx = x + dx, ny = y + dy;
+                if ( nx < 1 || nx >= MAX_MAPS - 1 || ny < 1 || ny >= MAX_MAPS - 1 )
+                    continue;
+                if ( map_bld[nx][ny][z] != NULL )
+                    continue;
+                if ( can_build( BUILDING_TURRET, map_table.type[nx][ny][z], z ) )
+                    free_cells++;
+            }
+        }
+        if ( free_cells < 2 )
+            continue;
+
+        /* Must be far enough from every existing AI HQ */
+        bool too_close = FALSE;
+        BUILDING_DATA *bld;
+        for ( bld = first_building; bld; bld = bld->next )
+        {
+            if ( !bld->owned || bld->type != BUILDING_HQ )
+                continue;
+            if ( !is_ai_owned( bld->owned ) )
+                continue;
+            if ( abs( bld->x - x ) + abs( bld->y - y ) < AI_MIN_FACTION_DIST )
+            {
+                too_close = TRUE;
+                break;
+            }
+        }
+        if ( too_close )
+            continue;
+
+        *ox = x;
+        *oy = y;
+        *oz = z;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+/*
  * ai_find_free_spot - search outward from (cx,cy) for a free buildable cell.
  * Returns TRUE and sets ox/oy if a free spot is found within radius.
  */

@@ -6771,7 +6771,7 @@ void save_map_png( )
  *
  * Syntax:
  *   aifaction list
- *   aifaction create <name> <x> <y> [aggression] [hostility]
+ *   aifaction create <name> [aggression] [hostility]
  *   aifaction delete <name>
  *   aifaction set <name> active|inactive
  *   aifaction set <name> aggression <0-100>
@@ -6827,12 +6827,11 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
     if ( !str_cmp( arg1, "create" ) )
     {
         char owner_pfx[MAX_INPUT_LENGTH];
-        char sX[MAX_INPUT_LENGTH], sY[MAX_INPUT_LENGTH];
         char tmp1[MAX_INPUT_LENGTH], tmp2[MAX_INPUT_LENGTH];
 
         if ( arg2[0] == '\0' )
         {
-            send_to_char( "Syntax: aifaction create <name> <x> <y> [aggression] [hostility]\n\r", ch );
+            send_to_char( "Syntax: aifaction create <name> [aggression] [hostility]\n\r", ch );
             return;
         }
         if ( find_ai_faction( arg2 ) )
@@ -6846,16 +6845,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
             return;
         }
 
-        argument = one_argument( argument, sX );
-        argument = one_argument( argument, sY );
-
-        if ( !is_number(sX) || !is_number(sY) )
-        {
-            send_to_char( "Syntax: aifaction create <name> <x> <y> [aggression] [hostility]\n\r", ch );
-            return;
-        }
-
-        int bx = atoi(sX), by = atoi(sY), bz = ch->z;
+        int bx = 0, by = 0, bz = 0;
 
         AI_FACTION *fac = &ai_factions[num_ai_factions];
         memset( fac, 0, sizeof(*fac) );
@@ -6879,36 +6869,36 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
 
         num_ai_factions++;
 
-        /* --- spawn starter base --- */
+        /* --- find a good location and spawn starter base --- */
         int placed = 0;
-        BUILDING_DATA *hq = ai_place_building( fac, BUILDING_HQ, bx, by, bz );
-        if ( hq )
+        bool found_loc = ai_find_faction_location( &bx, &by, &bz );
+
+        if ( found_loc )
         {
-            placed++;
-            /* try to place two turrets in a small radius around the HQ */
-            int tx, ty;
-            if ( ai_find_free_spot( BUILDING_TURRET, bx, by, bz, 2, &tx, &ty ) )
+            BUILDING_DATA *hq = ai_place_building( fac, BUILDING_HQ, bx, by, bz );
+            if ( hq )
             {
-                if ( ai_place_building( fac, BUILDING_TURRET, tx, ty, bz ) )
-                    placed++;
-            }
-            if ( ai_find_free_spot( BUILDING_TURRET, bx, by, bz, 3, &tx, &ty ) )
-            {
-                if ( ai_place_building( fac, BUILDING_TURRET, tx, ty, bz ) )
-                    placed++;
+                placed++;
+                int tx, ty;
+                if ( ai_find_free_spot( BUILDING_TURRET, bx, by, bz, 3, &tx, &ty ) )
+                    if ( ai_place_building( fac, BUILDING_TURRET, tx, ty, bz ) )
+                        placed++;
+                if ( ai_find_free_spot( BUILDING_TURRET, bx, by, bz, 4, &tx, &ty ) )
+                    if ( ai_place_building( fac, BUILDING_TURRET, tx, ty, bz ) )
+                        placed++;
             }
         }
 
         save_ai_factions();
-        if ( hq )
+        if ( found_loc && placed > 0 )
             snprintf( buf, sizeof(buf),
                       "AI faction '%s' created with %d building(s) at %d/%d.\n\r",
                       fac->name, placed, bx, by );
         else
             snprintf( buf, sizeof(buf),
-                      "AI faction '%s' created but could not place HQ at %d/%d "
-                      "(bad terrain or occupied). Use bset to assign buildings manually.\n\r",
-                      fac->name, bx, by );
+                      "AI faction '%s' created. Could not auto-place a base "
+                      "(map too full?). Use bset to assign buildings manually.\n\r",
+                      fac->name );
         send_to_char( buf, ch );
         return;
     }
@@ -7077,7 +7067,7 @@ void do_aifaction( CHAR_DATA *ch, char *argument )
 
     send_to_char( "Syntax:\n\r"
                   "  aifaction list\n\r"
-                  "  aifaction create <name> <x> <y> [aggression] [hostility]\n\r"
+                  "  aifaction create <name> [aggression] [hostility]\n\r"
                   "  aifaction delete <name>\n\r"
                   "  aifaction set <name> active|inactive\n\r"
                   "  aifaction set <name> aggression <0-100>\n\r"
