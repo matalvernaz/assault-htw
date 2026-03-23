@@ -4287,19 +4287,36 @@ Bthere <direction>
 @@c         @@aaifaction reload
 @@c         @@aaifaction save
 @@g
-@@g  AI factions are autonomous factions that own and defend buildings without
-@@g  needing a real player logged in. They attack rival factions and can
-@@g  optionally target player buildings.
+@@g  AI factions are autonomous factions that own and attack buildings without
+@@g  a real player logged in. They fight each other and can optionally hit
+@@g  player buildings too.
 @@g
-@@a  aggression @@g(0-100) controls how frequently the faction attacks.
-@@a  hostility  @@g(0-100) controls how often it targets player buildings vs
-@@g             rival AI factions (0 = only fights AI, 100 = prefers players).
-@@g             Default is 30 - mostly fights other AI factions.
+@@WQUICK START:@@g
+@@g  1. Create the faction:
+@@c       aifaction create RedClan RedClan 70 20
+@@g     This makes a faction named @@aRedClan@@g whose buildings will show as
+@@g     owned by @@aAI_RedClan@@g in-game (the prefix @@cAI_@@g is added automatically).
 @@g
-@@g  Buildings owned by an AI faction use the owner_name prefix @@cAI_@@g (e.g.
-@@g  @@cAI_RedClan@@g). Set @@cbld->owned@@g to this string and @@cbld->owner@@g to NULL.
+@@g  2. Give it some buildings using bset:
+@@c       bset <building#> owner AI_RedClan
+@@g     Use @@cblist@@g to find building numbers. The owner string must exactly match
+@@g     the faction's owner name (@@cAI_@@g + whatever suffix you chose).
 @@g
-@@g  Faction data is saved to @@adata/aifactions.dat@@g and loaded at boot.
+@@g  3. Set up enemies:
+@@c       aifaction addtarget RedClan BlueClan
+@@g     RedClan will now primarily attack BlueClan's buildings.
+@@g     Without targets, it attacks any other AI faction's buildings.
+@@g
+@@WPARAMETERS:@@g
+@@a  name        @@g- Single-word display name shown when it attacks (e.g. RedClan).
+@@a  owner_suffix@@g- The part after @@cAI_@@g in the owner string. Usually same as name.
+@@a              @@g  Must match exactly what you type in bset.
+@@a  aggression  @@g- 0-100. How often it attacks. 100 = very frequent. Default 50.
+@@a  hostility   @@g- 0-100. How often it targets player buildings instead of rival
+@@a              @@g  AI. 0 = only fights AI, 100 = prefers players. Default 30.
+@@g
+@@g  Faction data is saved to @@adata/aifactions.dat@@g and reloads at boot.
+@@g  Use @@caifaction list@@g to see all factions and their current settings.
 @@N
 ~
 0 $~
