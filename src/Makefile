@@ -25,7 +25,7 @@ L_FLAGS = -O0 -lz -lgd
 #L_FLAGS = $(PROF)
 
 O_FILES = act_alliance.o act_comm.o act_info.o act_misc.o act_mob.o act_move.o act_obj.o \
-          act_skills.o act_wiz.o comm.o areachk.o areasave.o board.o brands.o build.o \
+          act_skills.o act_wiz.o aifaction.o comm.o areachk.o areasave.o board.o brands.o build.o \
           buildare.o buildings.o buildtab.o const.o db.o email.o engineer.o fight.o games.o \
           hack.o handler.o hash.o interp.o lists.o logs.o macros.o mapper.o mccp.o mxp.o \
           pdelete.o save.o scheck.o social-edit.o space.o ssm.o strfuns.o sysdata.o \

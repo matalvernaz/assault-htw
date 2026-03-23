@@ -47,6 +47,7 @@
 #include <errno.h>
 #include <signal.h>
 #include "tables.h"
+#include "aifaction.h"
 
 #if !defined(macintosh)
 extern int _filbuf (FILE *);
@@ -382,6 +383,8 @@ void boot_db(bool fCopyOver) {
         load_ranks();
         log_f( "Loading alliances...." );
         load_alliances();
+        log_f( "Loading AI factions...." );
+        load_ai_factions();
         log_f( "Loading changes." );
         load_changes();
         log_f( "Loading logs." );

@@ -1307,6 +1307,9 @@ void update_web_data    ( int type, char *value );
 void generate_webpage   ( void );
 void load_web_data  ( void );
 
+// act_wiz.c
+void    do_aifaction    ( CHAR_DATA *ch, char *argument );
+
 #undef  CD
 #undef  MID
 #undef  OD

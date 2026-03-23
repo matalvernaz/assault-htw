@@ -39,6 +39,7 @@
 #include <string.h>
 #include <time.h>
 #include "ack.h"
+#include "aifaction.h"
 #include <signal.h>
 
 /*
@@ -1464,6 +1465,7 @@ void update_handler( void )
     static  int     pulse_time;
     static  int     pulse_bomb;
     static  int     pulse_backup;
+    static  int     pulse_ai;
     static  int     pulse_spec;
     //    static  int	    pulse_remap;
     extern  int     saving_area;
@@ -1510,6 +1512,11 @@ void update_handler( void )
         save_objects(0);
         save_buildings();
         save_alliances();
+    }
+    if ( --pulse_ai <= 0 )
+    {
+        pulse_ai = PULSE_TICK;
+        ai_faction_update();
     }
     if ( --pulse_backup    <= 0 )
     {

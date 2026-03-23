@@ -3494,13 +3494,11 @@ There are a number of ways to contact the imortal base. Below is a list of
 AIM   - Demortes~
 0 motd~
 Welcome to Assault: High Tech War!
-This game is always under development, so pardon our dust please.
-Bugs? Suggestions? Comments? Visit http://assault.demortes.com or email
-assault@demortes.com with your ideas.
+Running live at assault.thealvernaz.space port 6660.
+Bugs? Suggestions? Use the OOC channel or tell Fucker in-game.
  
- 
-Enjoy the MUD? Vote for us on TMC at http://goo.gl/QYFYzU
-Sight impaired? Typing CONFIG BLIND will allow you enter our assisted mode.
+ New? Type HELP NEWBIE to get started.
+ Sight impaired? Type CONFIG BLIND to enter assisted mode.
 ~
 1 Statues Statue Spelguru Cylis Demise Wulfston Seryx~
 .   Statues are buildings, available at rank 2, that add special
@@ -4274,6 +4272,35 @@ Bthere <direction>
 @@g  This is the in-game world-building tool.
 @@g
 @@GSee Also: @@yareasave, alist@@N
+~
+85 aifaction~
+@@gAI Faction Admin Command@@N
+@@g
+@@c Syntax: @@aaifaction list
+@@c         @@aaifaction create <name> <owner_suffix> [aggression] [hostility]
+@@c         @@aaifaction delete <name>
+@@c         @@aaifaction set <name> active|inactive
+@@c         @@aaifaction set <name> aggression <0-100>
+@@c         @@aaifaction set <name> hostility <0-100>
+@@c         @@aaifaction addtarget <faction> <target_faction>
+@@c         @@aaifaction deltarget <faction> <target_faction>
+@@c         @@aaifaction reload
+@@c         @@aaifaction save
+@@g
+@@g  AI factions are autonomous factions that own and defend buildings without
+@@g  needing a real player logged in. They attack rival factions and can
+@@g  optionally target player buildings.
+@@g
+@@a  aggression @@g(0-100) controls how frequently the faction attacks.
+@@a  hostility  @@g(0-100) controls how often it targets player buildings vs
+@@g             rival AI factions (0 = only fights AI, 100 = prefers players).
+@@g             Default is 30 - mostly fights other AI factions.
+@@g
+@@g  Buildings owned by an AI faction use the owner_name prefix @@cAI_@@g (e.g.
+@@g  @@cAI_RedClan@@g). Set @@cbld->owned@@g to this string and @@cbld->owner@@g to NULL.
+@@g
+@@g  Faction data is saved to @@adata/aifactions.dat@@g and loaded at boot.
+@@N
 ~
 0 $~
 #ROOMS

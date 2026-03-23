@@ -938,6 +938,10 @@ const   struct  cmd_type        cmd_table       [] =
     },
     { "addchange",      do_addchange,   POS_DEAD,        85,      LOG_NORMAL,      C_TYPE_IMM, C_SHOW_ALWAYS},
     {
+        "aifaction",        do_aifaction,     POS_DEAD,    85,  LOG_ALWAYS,
+        C_TYPE_IMM, C_SHOW_ALWAYS
+    },
+    {
         "allow",            do_allow,         POS_DEAD,   85,   LOG_ALWAYS,
         C_TYPE_IMM, C_SHOW_ALWAYS
     },

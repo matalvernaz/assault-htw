@@ -45,6 +45,7 @@
 
 #include <math.h>
 #include "ack.h"
+#include "aifaction.h"
 #include "tables.h"
 
 #ifndef DEC_EMAIL_H
@@ -365,8 +366,31 @@ void do_wizhelp( CHAR_DATA *ch, char *argument )
             snprintf( buf, sizeof(buf), "No command named '%s' found.\n\r", argument );
             send_to_char( buf, ch );
         }
-        /* Then show the help entry (if any) */
-        do_help( ch, argument );
+        /* Then show the help entry (if any).
+         * Search first_help directly — do_help() hits building/resource shortcuts
+         * first, which would show e.g. the "bomb" building instead of the
+         * wizard command help. */
+        {
+            HELP_DATA *pHelp;
+            bool found_help = FALSE;
+            for ( pHelp = first_help; pHelp != NULL; pHelp = pHelp->next )
+            {
+                if ( pHelp->level - 1 > get_trust( ch ) )
+                    continue;
+                if ( is_name( argument, pHelp->keyword ) ||
+                     !str_cmp( argument, pHelp->keyword ) )
+                {
+                    if ( pHelp->text[0] == '.' )
+                        send_to_char( pHelp->text + 1, ch );
+                    else
+                        send_to_char( pHelp->text, ch );
+                    found_help = TRUE;
+                    break;
+                }
+            }
+            if ( !found_help )
+                send_to_char( "No help entry for that command.\n\r", ch );
+        }
         return;
     }
 
@@ -6740,4 +6764,294 @@ void save_map_png( )
     * Destroy the image in memory.
     */
    gdImageDestroy( im );
+}
+
+/*
+ * do_aifaction - admin command to manage AI factions.
+ *
+ * Syntax:
+ *   aifaction list
+ *   aifaction create <name> <owner_name> [aggression] [hostility]
+ *   aifaction delete <name>
+ *   aifaction set <name> active|inactive
+ *   aifaction set <name> aggression <0-100>
+ *   aifaction set <name> hostility <0-100>
+ *   aifaction addtarget <name> <target_name>
+ *   aifaction deltarget <name> <target_name>
+ *   aifaction reload
+ *   aifaction save
+ */
+void do_aifaction( CHAR_DATA *ch, char *argument )
+{
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    int  i;
+
+    argument = one_argument( argument, arg1 );
+    argument = one_argument( argument, arg2 );
+    one_argument( argument, arg3 );
+
+    if ( arg1[0] == '\0' || !str_cmp( arg1, "list" ) )
+    {
+        if ( num_ai_factions == 0 )
+        {
+            send_to_char( "No AI factions defined.\n\r", ch );
+            return;
+        }
+        send_to_char( "@@cName             Owner Name       Act  Agg  Hst  Targets@@N\n\r", ch );
+        send_to_char( "@@c---------------  ---------------  ---  ---  ---  -------@@N\n\r", ch );
+        for ( i = 0; i < num_ai_factions; i++ )
+        {
+            AI_FACTION *fac = &ai_factions[i];
+            char targets[256];
+            int t;
+            targets[0] = '\0';
+            for ( t = 0; t < fac->num_targets; t++ )
+            {
+                if ( t > 0 ) strncat( targets, ",", sizeof(targets) - strlen(targets) - 1 );
+                strncat( targets, fac->target_names[t] ? fac->target_names[t] : "?",
+                         sizeof(targets) - strlen(targets) - 1 );
+            }
+            snprintf( buf, sizeof(buf), "%-15s  %-15s  %-3s  %3d  %3d  %s\n\r",
+                      fac->name, fac->owner_name,
+                      fac->active ? "yes" : "no",
+                      fac->aggression, fac->player_hostility,
+                      targets[0] ? targets : "(none)" );
+            send_to_char( buf, ch );
+        }
+        return;
+    }
+
+    if ( !str_cmp( arg1, "create" ) )
+    {
+        char owner_pfx[MAX_INPUT_LENGTH];
+
+        if ( arg2[0] == '\0' || arg3[0] == '\0' )
+        {
+            send_to_char( "Syntax: aifaction create <name> <owner_suffix> [aggression] [hostility]\n\r"
+                          "  owner_suffix will be prefixed with AI_ automatically.\n\r", ch );
+            return;
+        }
+        if ( find_ai_faction( arg2 ) )
+        {
+            send_to_char( "A faction with that name already exists.\n\r", ch );
+            return;
+        }
+        if ( num_ai_factions >= MAX_AI_FACTIONS )
+        {
+            send_to_char( "Maximum number of AI factions reached.\n\r", ch );
+            return;
+        }
+
+        AI_FACTION *fac = &ai_factions[num_ai_factions];
+        memset( fac, 0, sizeof(*fac) );
+        fac->name = str_dup( arg2 );
+        snprintf( owner_pfx, sizeof(owner_pfx), "%s%s", AI_OWNER_PREFIX, arg3 );
+        fac->owner_name       = str_dup( owner_pfx );
+        fac->description      = str_dup( "" );
+        fac->active           = TRUE;
+        fac->aggression       = 50;
+        fac->player_hostility = 30;
+        fac->attack_timer     = number_range( 0, 30 );
+        fac->repair_timer     = number_range( 0, AI_REPAIR_INTERVAL );
+
+        /* optional aggression / hostility from remaining args */
+        {
+            char tmp1[MAX_INPUT_LENGTH], tmp2[MAX_INPUT_LENGTH];
+            argument = one_argument( argument, tmp1 );
+            one_argument( argument, tmp2 );
+            if ( tmp1[0] )
+            {
+                int v = atoi( tmp1 );
+                fac->aggression = URANGE( 0, v, 100 );
+            }
+            if ( tmp2[0] )
+            {
+                int v = atoi( tmp2 );
+                fac->player_hostility = URANGE( 0, v, 100 );
+            }
+        }
+
+        num_ai_factions++;
+        save_ai_factions();
+        snprintf( buf, sizeof(buf), "AI faction '%s' (owner: %s) created.\n\r",
+                  fac->name, fac->owner_name );
+        send_to_char( buf, ch );
+        return;
+    }
+
+    if ( !str_cmp( arg1, "delete" ) )
+    {
+        AI_FACTION *fac;
+        int t;
+
+        if ( arg2[0] == '\0' )
+        {
+            send_to_char( "Syntax: aifaction delete <name>\n\r", ch );
+            return;
+        }
+        fac = find_ai_faction( arg2 );
+        if ( !fac )
+        {
+            send_to_char( "No faction by that name.\n\r", ch );
+            return;
+        }
+        snprintf( buf, sizeof(buf), "AI faction '%s' deleted.\n\r", fac->name );
+        free_string( fac->name );
+        free_string( fac->owner_name );
+        if ( fac->description ) free_string( fac->description );
+        for ( t = 0; t < fac->num_targets; t++ )
+            if ( fac->target_names[t] ) free_string( fac->target_names[t] );
+
+        /* compact array */
+        int idx = (int)(fac - ai_factions);
+        for ( i = idx; i < num_ai_factions - 1; i++ )
+            ai_factions[i] = ai_factions[i+1];
+        memset( &ai_factions[num_ai_factions - 1], 0, sizeof(AI_FACTION) );
+        num_ai_factions--;
+        save_ai_factions();
+        send_to_char( buf, ch );
+        return;
+    }
+
+    if ( !str_cmp( arg1, "set" ) )
+    {
+        AI_FACTION *fac;
+        char field[MAX_INPUT_LENGTH];
+        char value[MAX_INPUT_LENGTH];
+
+        if ( arg2[0] == '\0' )
+        {
+            send_to_char( "Syntax: aifaction set <name> active|inactive|aggression <n>|hostility <n>\n\r", ch );
+            return;
+        }
+        fac = find_ai_faction( arg2 );
+        if ( !fac )
+        {
+            send_to_char( "No faction by that name.\n\r", ch );
+            return;
+        }
+
+        argument = one_argument( argument, field );
+        one_argument( argument, value );
+
+        if ( !str_cmp( field, "active" ) )   { fac->active = TRUE;  send_to_char( "Faction activated.\n\r", ch );   }
+        else if ( !str_cmp( field, "inactive" ) ) { fac->active = FALSE; send_to_char( "Faction deactivated.\n\r", ch ); }
+        else if ( !str_cmp( field, "aggression" ) )
+        {
+            if ( !value[0] ) { send_to_char( "Specify a value 0-100.\n\r", ch ); return; }
+            fac->aggression = URANGE( 0, atoi(value), 100 );
+            snprintf( buf, sizeof(buf), "Aggression set to %d.\n\r", fac->aggression );
+            send_to_char( buf, ch );
+        }
+        else if ( !str_cmp( field, "hostility" ) )
+        {
+            if ( !value[0] ) { send_to_char( "Specify a value 0-100.\n\r", ch ); return; }
+            fac->player_hostility = URANGE( 0, atoi(value), 100 );
+            snprintf( buf, sizeof(buf), "Player hostility set to %d.\n\r", fac->player_hostility );
+            send_to_char( buf, ch );
+        }
+        else
+        {
+            send_to_char( "Unknown field. Use: active, inactive, aggression, hostility.\n\r", ch );
+            return;
+        }
+        save_ai_factions();
+        return;
+    }
+
+    if ( !str_cmp( arg1, "addtarget" ) )
+    {
+        AI_FACTION *fac;
+
+        if ( arg2[0] == '\0' || arg3[0] == '\0' )
+        {
+            send_to_char( "Syntax: aifaction addtarget <faction> <target_faction>\n\r", ch );
+            return;
+        }
+        fac = find_ai_faction( arg2 );
+        if ( !fac ) { send_to_char( "No faction by that name.\n\r", ch ); return; }
+        if ( !find_ai_faction( arg3 ) )
+        {
+            send_to_char( "Target faction not found.\n\r", ch );
+            return;
+        }
+        if ( fac->num_targets >= MAX_AI_TARGETS )
+        {
+            send_to_char( "That faction already has the maximum number of targets.\n\r", ch );
+            return;
+        }
+        /* check duplicate */
+        for ( i = 0; i < fac->num_targets; i++ )
+            if ( fac->target_names[i] && !str_cmp( fac->target_names[i], arg3 ) )
+            {
+                send_to_char( "That target is already listed.\n\r", ch );
+                return;
+            }
+        fac->target_names[fac->num_targets++] = str_dup( arg3 );
+        save_ai_factions();
+        snprintf( buf, sizeof(buf), "Added '%s' as a target for '%s'.\n\r", arg3, arg2 );
+        send_to_char( buf, ch );
+        return;
+    }
+
+    if ( !str_cmp( arg1, "deltarget" ) )
+    {
+        AI_FACTION *fac;
+        int t;
+
+        if ( arg2[0] == '\0' || arg3[0] == '\0' )
+        {
+            send_to_char( "Syntax: aifaction deltarget <faction> <target_faction>\n\r", ch );
+            return;
+        }
+        fac = find_ai_faction( arg2 );
+        if ( !fac ) { send_to_char( "No faction by that name.\n\r", ch ); return; }
+        for ( t = 0; t < fac->num_targets; t++ )
+        {
+            if ( fac->target_names[t] && !str_cmp( fac->target_names[t], arg3 ) )
+            {
+                free_string( fac->target_names[t] );
+                for ( i = t; i < fac->num_targets - 1; i++ )
+                    fac->target_names[i] = fac->target_names[i+1];
+                fac->target_names[fac->num_targets - 1] = NULL;
+                fac->num_targets--;
+                save_ai_factions();
+                snprintf( buf, sizeof(buf), "Removed '%s' from '%s' target list.\n\r", arg3, arg2 );
+                send_to_char( buf, ch );
+                return;
+            }
+        }
+        send_to_char( "That target was not found in the faction's list.\n\r", ch );
+        return;
+    }
+
+    if ( !str_cmp( arg1, "reload" ) )
+    {
+        load_ai_factions();
+        snprintf( buf, sizeof(buf), "Reloaded %d AI faction(s) from disk.\n\r", num_ai_factions );
+        send_to_char( buf, ch );
+        return;
+    }
+
+    if ( !str_cmp( arg1, "save" ) )
+    {
+        save_ai_factions();
+        send_to_char( "AI factions saved.\n\r", ch );
+        return;
+    }
+
+    send_to_char( "Syntax:\n\r"
+                  "  aifaction list\n\r"
+                  "  aifaction create <name> <owner_suffix> [aggression] [hostility]\n\r"
+                  "  aifaction delete <name>\n\r"
+                  "  aifaction set <name> active|inactive\n\r"
+                  "  aifaction set <name> aggression <0-100>\n\r"
+                  "  aifaction set <name> hostility <0-100>\n\r"
+                  "  aifaction addtarget <faction> <target_faction>\n\r"
+                  "  aifaction deltarget <faction> <target_faction>\n\r"
+                  "  aifaction reload\n\r"
+                  "  aifaction save\n\r", ch );
 }
