@@ -240,6 +240,82 @@ bool is_ai_owned( const char *owner_name )
 }
 
 /* -----------------------------------------------------------------------
+ * Building placement
+ * ----------------------------------------------------------------------- */
+
+/*
+ * ai_place_building - create and place a completed building for a faction.
+ * Returns the building on success, NULL if the spot is occupied or invalid.
+ */
+BUILDING_DATA *ai_place_building( AI_FACTION *fac, int type, int x, int y, int z )
+{
+    BUILDING_DATA *bld;
+    int i;
+
+    if ( x < 1 || x >= MAX_MAPS - 1 || y < 1 || y >= MAX_MAPS - 1 )
+        return NULL;
+    if ( z < 0 || z >= Z_MAX )
+        return NULL;
+    if ( map_bld[x][y][z] != NULL )
+        return NULL;
+    if ( !can_build( type, map_table.type[x][y][z], z ) )
+        return NULL;
+
+    bld = create_building( type );
+    if ( !bld )
+        return NULL;
+
+    bld->x = x;
+    bld->y = y;
+    bld->z = z;
+
+    free_string( bld->owned );
+    bld->owned  = str_dup( fac->owner_name );
+    bld->owner  = NULL;
+
+    /* fully built — zero out the resource cost */
+    for ( i = 0; i < 8; i++ )
+        bld->resources[i] = 0;
+
+    bld->hp     = bld->maxhp;
+    bld->shield = bld->maxshield;
+
+    activate_building( bld, TRUE );
+    map_bld[x][y][z] = bld;
+
+    return bld;
+}
+
+/*
+ * ai_find_free_spot - search outward from (cx,cy) for a free buildable cell.
+ * Returns TRUE and sets ox/oy if a free spot is found within radius.
+ */
+bool ai_find_free_spot( int type, int cx, int cy, int z,
+                               int radius, int *ox, int *oy )
+{
+    int dx, dy;
+    for ( dx = -radius; dx <= radius; dx++ )
+    {
+        for ( dy = -radius; dy <= radius; dy++ )
+        {
+            if ( dx == 0 && dy == 0 )
+                continue;
+            int nx = cx + dx, ny = cy + dy;
+            if ( nx < 1 || nx >= MAX_MAPS - 1 || ny < 1 || ny >= MAX_MAPS - 1 )
+                continue;
+            if ( map_bld[nx][ny][z] != NULL )
+                continue;
+            if ( !can_build( type, map_table.type[nx][ny][z], z ) )
+                continue;
+            *ox = nx;
+            *oy = ny;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/* -----------------------------------------------------------------------
  * Attack / repair helpers
  * ----------------------------------------------------------------------- */
 

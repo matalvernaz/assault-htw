@@ -54,6 +54,10 @@ AI_FACTION *find_ai_faction( const char *name );
 AI_FACTION *find_ai_faction_by_owner( const char *owner_name );
 bool        is_ai_owned( const char *owner_name );
 
+/* building placement (used by do_aifaction create) */
+BUILDING_DATA *ai_place_building( AI_FACTION *fac, int type, int x, int y, int z );
+bool           ai_find_free_spot( int type, int cx, int cy, int z, int radius, int *ox, int *oy );
+
 /* per-tick update called from update_handler */
 void        ai_faction_update( void );
 

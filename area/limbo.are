@@ -4277,7 +4277,7 @@ Bthere <direction>
 @@gAI Faction Admin Command@@N
 @@g
 @@c Syntax: @@aaifaction list
-@@c         @@aaifaction create <name> [aggression] [hostility]
+@@c         @@aaifaction create <name> <x> <y> [aggression] [hostility]
 @@c         @@aaifaction delete <name>
 @@c         @@aaifaction set <name> active|inactive
 @@c         @@aaifaction set <name> aggression <0-100>
@@ -4291,12 +4291,15 @@ Bthere <direction>
 @@g  logged in. They fight each other and can optionally hit players too.
 @@g
 @@WQUICK START:@@g
-@@g  1. Create the faction:
-@@c       aifaction create RedClan 70 20
-@@g     Name is @@aRedClan@@g, aggression 70, player hostility 20.
-@@g     Its buildings will show as owned by @@aAI_RedClan@@g (prefix added automatically).
+@@g  1. Create the faction and place its starter base:
+@@c       aifaction create RedClan 750 750 70 20
+@@g     Name is @@aRedClan@@g, base at map coords 750/750, aggression 70, hostility 20.
+@@g     This places an HQ + up to 2 turrets at that location automatically.
+@@g     Buildings show as owned by @@aAI_RedClan@@g (prefix added automatically).
+@@g     If the terrain is unsuitable the faction is still created; use bset to
+@@g     assign buildings manually instead.
 @@g
-@@g  2. Give it buildings with bset:
+@@g  2. Optionally add more buildings with bset:
 @@c       bset <building#> owner AI_RedClan
 @@g     Use @@cblist@@g to find building numbers. The owner string is always
 @@g     @@cAI_@@g followed by the faction name you chose.
