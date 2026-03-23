@@ -35,6 +35,9 @@
 #include <time.h>
 #include "mapper.h"
 
+struct room_content_type contents[MAX_MAP][MAX_MAP];
+int map[MAX_MAP][MAX_MAP];
+
 #define INVALID_COORDS(x,y) (( x < BORDER_SIZE || x > MAX_MAPS-BORDER_SIZE || y < BORDER_SIZE || y > MAX_MAPS-BORDER_SIZE ))
 
 extern char * compass_name[];
@@ -1373,7 +1376,7 @@ void ShowSMap( CHAR_DATA *ch, bool small )
                     sprintf( color, "@@g" );
                 }
             }
-            if ( ( map_vhc[x][y] || IS_SET(ch->effect,EFFECT_VISION) ) )
+            if ( ( map_vhc[x][y][ch->z] || IS_SET(ch->effect,EFFECT_VISION) ) )
             {
                 VEHICLE_DATA *whc;
                 CHAR_DATA *wch;

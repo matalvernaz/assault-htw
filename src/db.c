@@ -1862,7 +1862,7 @@ void load_sobjects(int mode) {
 			}
 		}
 	}
-	fclose(objectfp);
+	if (objectfp) fclose(objectfp);
 	fpArea = NULL;
 
 }
@@ -1924,7 +1924,7 @@ void read_map_from_file(void) {
 		}
 
 	}
-	fclose(objectfp);
+	if (objectfp) fclose(objectfp);
 	fpArea = NULL;
 }
 
@@ -1966,7 +1966,7 @@ void load_alliances(void) {
 			alliance_table[i].history = str_dup("");
 		}
 	}
-	fclose(objectfp);
+	if (objectfp) fclose(objectfp);
 	fpArea = NULL;
 }
 
@@ -2107,7 +2107,7 @@ void load_vehicles(int mode) {
 		}
 
 	}
-	fclose(fp);
+	if (fp) fclose(fp);
 	fpArea = NULL;
 }
 
@@ -2128,8 +2128,8 @@ void load_buildings( void )
     {
         log_f( "Load Buildings Table: fopen" );
         perror( "failed open of buildings.txt in load_buildings" );
+        return;
     }
-    else
     {
         fpArea = fp;
         sprintf( strArea, "%s", object_file_name );
@@ -2363,7 +2363,7 @@ void load_scores(void) {
 			score_table[i].time = fread_number(fp);
 		}
 	}
-	fclose(fp);
+	if (fp) fclose(fp);
 	fpArea = NULL;
 
 	if ((fp = fopen( MAX_PLAYERS_FILE, "r")) == NULL) {
@@ -2375,7 +2375,7 @@ void load_scores(void) {
 		sprintf(strArea, "%s", MAX_PLAYERS_FILE);
 		max_players_ever = fread_number(fp);
 	}
-	fclose(fp);
+	if (fp) fclose(fp);
 	fpArea = NULL;
 	return;
 }
@@ -2408,7 +2408,7 @@ void load_ranks(void) {
 			rank_table[i].rank = fread_number(fp);
 		}
 	}
-	fclose(fp);
+	if (fp) fclose(fp);
 	fpArea = NULL;
 }
 
@@ -2678,8 +2678,6 @@ void load_building_t(void) {
 	char object_file_name[MAX_STRING_LENGTH];
 	char buf[MAX_STRING_LENGTH];
 	int i = 0, j;
-	int cur_revision;
-
 	sprintf(object_file_name, "%s", BUILDING_TABLE_FILE);
 
 	sprintf(buf, "Loading %s\n\r", object_file_name);
@@ -2692,7 +2690,7 @@ void load_building_t(void) {
 		fpArea = fp;
 		sprintf(strArea, "%s", object_file_name);
 
-		cur_revision = fread_number(fp);
+		fread_number(fp); /* revision number, not used */
 		for (i = 0; i < MAX_POSSIBLE_BUILDING; i++) {
 			if (fread_letter(fpArea) == '#')
 				break;

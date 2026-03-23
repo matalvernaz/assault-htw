@@ -220,7 +220,7 @@ void turn_on_mxp (DESCRIPTOR_DATA *d)
     if ( d->character && !IS_SET(d->character->config,CONFIG_MXP) )
         SET_BIT(d->character->config,CONFIG_MXP);
 
-    write_to_buffer( d, start_mxp_str, 0 );
+    write_to_buffer( d, (const char *)start_mxp_str, 0 );
     write_to_buffer( d, MXPMODE (1), 0 );                   /* permanent secure mode */
     write_to_buffer( d, MXPTAG(d,"!-- Set up MXP elements --"), 0);
     /* Exit tag */

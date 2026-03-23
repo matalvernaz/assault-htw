@@ -413,7 +413,7 @@ char *_fread_string(FILE * fp, const char *caller)
 
     for (;;)
     {
-        switch (*ptr = getc(fp))
+        { int _gc = getc(fp); *ptr = (char)_gc; switch (_gc)
         {
         default:
             ptr++;
@@ -450,7 +450,7 @@ char *_fread_string(FILE * fp, const char *caller)
             ptr=_str_dup(buf, caller);
             tail_chain();
             return ptr;
-        }
+        } }
     }
 }
 
@@ -477,7 +477,7 @@ char *_fread_string_eol(FILE * fp, const char *caller)
 
     for (;;)
     {
-        switch (*ptr = getc(fp))
+        { int _gc = getc(fp); *ptr = (char)_gc; switch (_gc)
         {
         default:
             ptr++;
@@ -505,7 +505,7 @@ char *_fread_string_eol(FILE * fp, const char *caller)
             }
 
             return _str_dup(buf, caller);
-        }
+        } }
     }
 }
 
@@ -532,7 +532,7 @@ void temp_fread_string(FILE * fp, char *buf)
 
     for (;;)
     {
-        switch (*ptr = getc(fp))
+        { int _gc = getc(fp); *ptr = (char)_gc; switch (_gc)
         {
         default:
             ptr++;
@@ -554,7 +554,7 @@ void temp_fread_string(FILE * fp, char *buf)
         case '~':
             *ptr = '\0';
             return;
-        }
+        } }
     }
 }
 

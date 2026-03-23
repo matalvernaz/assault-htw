@@ -675,6 +675,7 @@
 #define PFLAG_RAD_SIL           BIT_5
 #define PFLAG_HELPING           BIT_6
 #define PLR_PDELETER            BIT_7
+#define PFLAG_MULTIPLAY         BIT_9   /* allow same-IP multi-login */
 #define PLR_BASIC           BIT_8
 #define PLR_HOLYLIGHT                   BIT_13
 #define PLR_WIZINVIS                    BIT_14

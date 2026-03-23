@@ -82,13 +82,13 @@ void do_sdelete( CHAR_DATA *ch, char *argument )
     }
     *pArg = '\0';
 
-    if (  ( ch->pcdata->pwd != '\0' )
+    if (  ( ch->pcdata->pwd != NULL )
             && ( arg1[0] == '\0' )  )
     {
         send_to_char( "Syntax: pdelete (password)\n\r", ch );
         return;
     }
-    if (  ( ch->pcdata->pwd != '\0' )
+    if (  ( ch->pcdata->pwd != NULL )
             && ( strcmp( crypt( arg1, ch->pcdata->pwd ), ch->pcdata->pwd ) )  )
     {
         WAIT_STATE( ch, 40 );
@@ -114,7 +114,7 @@ void do_sdelete( CHAR_DATA *ch, char *argument )
         if ( min == -1 )
             if ( ( score_table[i].kills < ch->pcdata->pkills || ( score_table[i].kills == ch->pcdata->pkills &&score_table[min].buildings < ch->pcdata->bkills ) || ( score_table[i].kills == ch->pcdata->pkills &&score_table[min].buildings == ch->pcdata->bkills  && score_table[i].time < my_get_hours(ch,FALSE) ) ) )
                 min = i;
-        if ( ( score_table[i].kills < score_table[min].kills || ( score_table[i].kills == score_table[min].kills &&score_table[min].buildings < score_table[i].buildings ) || ( score_table[i].kills == score_table[i].kills &&score_table[min].buildings == score_table[i].buildings  && score_table[i].time < score_table[min].time ) ) )
+        if ( ( score_table[i].kills < score_table[min].kills || ( score_table[i].kills == score_table[min].kills &&score_table[min].buildings < score_table[i].buildings ) || ( score_table[i].kills == score_table[min].kills &&score_table[min].buildings == score_table[i].buildings  && score_table[i].time < score_table[min].time ) ) )
             min = i;
         if ( score_table[i].name == NULL )
         {

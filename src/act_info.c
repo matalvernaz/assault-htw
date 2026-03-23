@@ -1398,14 +1398,14 @@ void do_password( CHAR_DATA *ch, char *argument )
     }
     *pArg = '\0';
 
-    if (  ( ch->pcdata->pwd != '\0' )
+    if (  ( ch->pcdata->pwd != NULL )
             && ( arg1[0] == '\0' || arg2[0] == '\0' )  )
     {
         send_to_char( "Syntax: password <old> <new>.\n\r", ch );
         return;
     }
 
-    if (  ( ch->pcdata->pwd != '\0' )
+    if (  ( ch->pcdata->pwd != NULL )
             && ( strcmp( crypt( arg1, ch->pcdata->pwd ), ch->pcdata->pwd ) )  )
     {
         WAIT_STATE( ch, 40 );
@@ -3446,7 +3446,7 @@ void do_base( CHAR_DATA *ch, char *argument )
     if ( IS_NPC(ch) )
         return;
 
-    bool blind = IS_SET(ch->config, CONFIG_BLIND);
+    int blind = IS_SET(ch->config, CONFIG_BLIND) != 0;
 
     if ( !blind )
     {

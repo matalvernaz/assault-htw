@@ -230,7 +230,6 @@ bool compressStart(DESCRIPTOR_DATA *d, unsigned char telopt)
 bool compressEnd(DESCRIPTOR_DATA *d,unsigned char type)
 {
     unsigned char dummy[1];
-    unsigned char telopt;
 
     if (!d->out_compress)
         return TRUE;
@@ -241,8 +240,6 @@ bool compressEnd(DESCRIPTOR_DATA *d,unsigned char type)
 
     d->out_compress->avail_in = 0;
     d->out_compress->next_in = dummy;
-    telopt = d->compressing;
-
     if (deflate(d->out_compress, Z_FINISH) != Z_STREAM_END)
         return FALSE;
 

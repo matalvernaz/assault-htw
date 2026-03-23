@@ -169,7 +169,7 @@ void do_check_areas(CHAR_DATA * ch, char * argument)
                 {
                     fprintf(out_file,"Room: [%5i] -> [%5i]\n",old_vnum,new_vnum);
                     /* Delete from room hashing table, and put new vnum in. */
-                    add_hash_entry(room_hash,old_vnum,(void *) new_vnum);
+                    add_hash_entry(room_hash,old_vnum,(void *)(intptr_t) new_vnum);
                     swap_global_hash('R',pRoomIndex,old_vnum,new_vnum);
                     pRoomIndex->vnum=new_vnum;
                     area_modified(CurArea);
@@ -199,7 +199,7 @@ void do_check_areas(CHAR_DATA * ch, char * argument)
                 {
                     fprintf(out_file,"Obj: [%5i] -> [%5i] %s\n",old_vnum,new_vnum,pObjIndex->short_descr);
                     /* Delete from obj hashing table, and put new vnum in. */
-                    add_hash_entry(obj_hash,old_vnum,(void *) new_vnum);
+                    add_hash_entry(obj_hash,old_vnum,(void *)(intptr_t) new_vnum);
                     swap_global_hash('O',pObjIndex,old_vnum,new_vnum);
                     pObjIndex->vnum=new_vnum;
                     area_modified(CurArea);
@@ -229,7 +229,7 @@ void do_check_areas(CHAR_DATA * ch, char * argument)
                 {
                     fprintf(out_file,"Mob: [%5i] -> [%5i] %s\n",old_vnum,new_vnum,pMobIndex->short_descr);    
                     /* Delete from mob hashing table, and put new vnum in. */
-                    add_hash_entry(mob_hash,old_vnum,(void *) new_vnum);
+                    add_hash_entry(mob_hash,old_vnum,(void *)(intptr_t) new_vnum);
                     swap_global_hash('M',pMobIndex,old_vnum,new_vnum);
                     pMobIndex->vnum=new_vnum;
                     area_modified(CurArea);

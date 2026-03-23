@@ -605,11 +605,15 @@ void do_logs( CHAR_DATA *ch, char *argument )
 
         if( IS_IMMORTAL(ch))
         {
-            sprintf(this_list, "%s@@d[@@y%2d@@d]@@w @@r%-9s @@e%c%-4s @@a*%-6s  @@W%-55s@@N\r\n", this_list, ( i + 1 ), log_table[i].reporter, UPPER(*log_table[i].type), log_table[i].type + 1, log_table[i].date, log_table[i].log );
+            char _entry[MSL];
+            snprintf(_entry, MSL, "@@d[@@y%2d@@d]@@w @@r%-9s @@e%c%-4s @@a*%-6s  @@W%-55s@@N\r\n", ( i + 1 ), log_table[i].reporter, UPPER(*log_table[i].type), log_table[i].type + 1, log_table[i].date, log_table[i].log );
+            strncat(this_list, _entry, MSL - strlen(this_list) - 1);
         }
         else
         {
-            sprintf(this_list, "%s@@d[@@y%2d@@d]@@w @@e%c%-4s @@a*%-6s  @@W%-55s@@N\r\n", this_list, ( i + 1 ), UPPER(*log_table[i].type), log_table[i].type + 1, log_table[i].date, log_table[i].log );
+            char _entry[MSL];
+            snprintf(_entry, MSL, "@@d[@@y%2d@@d]@@w @@e%c%-4s @@a*%-6s  @@W%-55s@@N\r\n", ( i + 1 ), UPPER(*log_table[i].type), log_table[i].type + 1, log_table[i].date, log_table[i].log );
+            strncat(this_list, _entry, MSL - strlen(this_list) - 1);
         }
     }
 

@@ -200,7 +200,9 @@ void move_char( CHAR_DATA *ch, int door )
     }
 
     if ( ch->in_building )												//Currently in a building (before moving)
+    {
         from_bld = TRUE;
+    }
 
 	bld = get_char_building(ch);			//BELOW: If in building, exits exist and building is completed... (and owner is not the player, OR fight timer is active) and not immortal
 	if ( bld != NULL && bld->exit[door] == FALSE && complete(bld) && ((bld->owner != ch) || (ch->fighttimer > 0))  && !IS_IMMORTAL(ch) )

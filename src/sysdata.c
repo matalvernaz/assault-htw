@@ -79,7 +79,7 @@ void load_sysdata( void )
             paintlock = TRUE;
         }
     }
-    fclose( sysfp );
+    if (sysfp) fclose( sysfp );
 }
 
 void save_sysdata( void )

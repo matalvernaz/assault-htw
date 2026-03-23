@@ -166,7 +166,7 @@ void save_char_obj( CHAR_DATA *ch )
 #endif
     /* Tack on a .temp to strsave, use as tempstrsave */
 
-    sprintf( tempstrsave, "%s.temp", strsave );
+    snprintf( tempstrsave, MAX_INPUT_LENGTH, "%s.temp", strsave );
 
     if ( ( fp = fopen( tempstrsave, "w" ) ) == NULL )
     {
@@ -278,6 +278,8 @@ void fwrite_char( CHAR_DATA *ch, FILE *fp )
     fprintf( fp, "Suicided	   %d\n",   ch->suicide          );
     fprintf( fp, "MedalTimer   %d\n",  ch->medaltimer );
     fprintf( fp, "FightTimer   %d\n",  ch->fighttimer );
+    /* salvage_timer is intentionally not saved: it resets to 0 on login,
+     * which is the desired behaviour (no cooldown carry-over between sessions). */
     fprintf( fp, "Reimb        %d\n",  ch->pcdata->reimb );
     fprintf( fp, "ProfPt       %d %d\n",  ch->pcdata->prof_points, ch->pcdata->prof_ttl );
     fprintf( fp, "Spec         %d\n",  ch->pcdata->spec_init );
@@ -409,7 +411,7 @@ bool load_char_obj( DESCRIPTOR_DATA *d, char *name, bool system_call )
                 else
                 {
                     fread_to_eol(fp);
-                    add_hash_entry(hash_changed_vnums,oldvnum,(void *) newvnum);
+                    add_hash_entry(hash_changed_vnums,oldvnum,(void *)(intptr_t) newvnum);
                 }
             }
             fclose(fp);
@@ -599,7 +601,7 @@ bool load_char_obj( DESCRIPTOR_DATA *d, char *name, bool system_call )
 #endif
 
 #if !defined(macintosh) && !defined(MSDOS)
-    sprintf( tempstrsave, "%s%s", strsave, ".gz" );
+    snprintf( tempstrsave, MAX_INPUT_LENGTH, "%s.gz", strsave );
     if ( ( fp = fopen( tempstrsave, "r" ) ) != NULL )
     {
         char buf[MAX_STRING_LENGTH];
@@ -1203,7 +1205,7 @@ void fread_obj( CHAR_DATA *ch, FILE *fp )
                         if (OldVnum != TEMP_VNUM)
                         {
                             /* Check on move table */
-                            if ( (newvnum=(int) get_hash_entry(hash_changed_vnums,OldVnum)) != 0)
+                            if ( (newvnum=(int)(intptr_t) get_hash_entry(hash_changed_vnums,OldVnum)) != 0)
                             {
                                 obj->pIndexData=get_obj_index(newvnum);
                                 if (obj->pIndexData == NULL)
@@ -1332,8 +1334,7 @@ void fread_obj( CHAR_DATA *ch, FILE *fp )
             {
                 if ( cur_revision < UPGRADE_REVISION )
                 {
-                    int temp_loc;
-                    temp_loc = fread_number( fp );
+                    fread_number( fp );
                     obj->wear_loc = -1;
                     fMatch = TRUE;
                     break;

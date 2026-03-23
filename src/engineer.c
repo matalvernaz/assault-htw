@@ -304,14 +304,14 @@ void do_wires( CHAR_DATA *ch, char *argument )
 {
     char buf[MSL] = "\0";
     OBJ_DATA *obj;
-    int i,w;
+    int i;
     if ( ( obj = get_eq_char(ch,WEAR_HOLD_HAND_L) ) == NULL || obj->item_type != ITEM_TOOLKIT )
     {
         send_to_char( "You must be holding a toolkit in your left hand.\n\r", ch );
         return;
     }
     send_to_char( "\n\r@@xThe wires are connected as follows:\n\r", ch );
-    w = -1;
+
     sprintf( buf, "@@rGreen -----> " );
     if ( obj->value[0] > 0 )
     {
@@ -328,7 +328,7 @@ void do_wires( CHAR_DATA *ch, char *argument )
             }
         }
     }
-    w = -1;
+
     send_to_char(buf,ch);
     sprintf( buf, "@@aBlue ------> " );
     if ( obj->value[1] > 0 )
@@ -346,7 +346,7 @@ void do_wires( CHAR_DATA *ch, char *argument )
             }
         }
     }
-    w = -1;
+
     send_to_char(buf,ch);
     sprintf( buf, "@@eRed -------> " );
     if ( obj->value[2] > 0 )
@@ -364,7 +364,7 @@ void do_wires( CHAR_DATA *ch, char *argument )
             }
         }
     }
-    w = -1;
+
     send_to_char(buf,ch);
     sprintf( buf, "@@yYellow ----> " );
     if ( obj->value[3] > 0 )

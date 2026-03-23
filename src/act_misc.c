@@ -279,7 +279,7 @@ void do_a_build( CHAR_DATA *ch, char *argument )
             buildings++;
         }
     }
-    if ( !built[BUILDING_HQ]>0 )
+    if ( built[BUILDING_HQ] <= 0 )
         for ( i = 0; i<MAX_BUILDING; i++ )
         {
             built[i] = 0;
@@ -574,8 +574,11 @@ comments:
                 buf[0] = '\0';
             }
         }
-        sprintf( buf, "%s\n\r%s\n\r%s", buf, s_buf, u_buf );
-        send_to_char( buf, ch );
+        {
+            char tmp_buf[MSL];
+            snprintf( tmp_buf, MSL, "%s\n\r%s\n\r%s", buf, s_buf, u_buf );
+            send_to_char( tmp_buf, ch );
+        }
         sprintf( buf, "\n\r@@cThe current building limit is @@a%d@@a.@@N\n\r", BUILDING_LIMIT );
         send_to_char( buf, ch );
         found = TRUE;
@@ -1968,13 +1971,13 @@ void do_mine( CHAR_DATA *ch, char *argument )
     if ( mine )
     {
         if ( !str_cmp(argument, "iron") )
-            type = 0;
+            type = ITEM_IRON;
         else if (!str_cmp(argument, "copper") )
-            type = 2;
+            type = ITEM_COPPER;
         else if (!str_cmp(argument, "silver") )
-            type = 4;
+            type = ITEM_SILVER;
         else if (!str_cmp(argument, "gold") )
-            type = 3;
+            type = ITEM_GOLD;
         else if ( !str_cmp(argument, "none") )
             type = -1;
         else
@@ -3939,13 +3942,13 @@ void do_connect( CHAR_DATA *ch, char *argument )
     }
     if ( ( obj1 = get_obj_carry(ch,arg) ) == NULL )
     {
-        sprintf( buf, "You are not carrying %s.\n\r", arg );
+        snprintf( buf, MSL, "You are not carrying %s.\n\r", arg );
         send_to_char( buf, ch );
         return;
     }
     if ( ( obj2 = get_obj_carry(ch,argument) ) == NULL )
     {
-        sprintf( buf, "You are not carrying %s.\n\r", argument );
+        snprintf( buf, MSL, "You are not carrying %s.\n\r", argument );
         send_to_char( buf, ch );
         return;
     }
@@ -4033,7 +4036,7 @@ void do_track( CHAR_DATA *ch, char *argument )
                 return;
             }
             sprintf(pbuf,", on %s", planet_table[wch->z].name);
-            sprintf( buf, "\n\r@@cYou detect your target at @@a%d@@c,@@a%d@@c%s!@@N\n\r", wch->x, wch->y, (ch->z==wch->z)?"":pbuf );
+            snprintf( buf, MSL, "\n\r@@cYou detect your target at @@a%d@@c,@@a%d@@c%s!@@N\n\r", wch->x, wch->y, (ch->z==wch->z)?"":pbuf );
             send_to_char( buf, ch );
             return;
         }
@@ -4779,7 +4782,7 @@ void construct_space_vessal( CHAR_DATA *ch, char *argument )
         {
             if ( s_res_table[i].type != RES_SHIP )
             {
-                sprintf( buf, "%s is not a ship type.\n\r", arg1 );
+                snprintf( buf, MSL, "%s is not a ship type.\n\r", arg1 );
                 send_to_char(buf,ch);
                 return;
             }
@@ -4790,7 +4793,7 @@ void construct_space_vessal( CHAR_DATA *ch, char *argument )
         {
             if ( s_res_table[i].type != RES_ARMOR )
             {
-                sprintf( buf, "%s is not an armor type.\n\r", arg2 );
+                snprintf( buf, MSL, "%s is not an armor type.\n\r", arg2 );
                 send_to_char(buf,ch);
                 return;
             }
@@ -4811,19 +4814,19 @@ void construct_space_vessal( CHAR_DATA *ch, char *argument )
     }
     if ( t == -1 )
     {
-        sprintf( buf, "%s - You do not know of such ship type.\n\r", arg1 );
+        snprintf( buf, MSL, "%s - You do not know of such ship type.\n\r", arg1 );
         send_to_char( buf, ch );
         return;
     }
     else if ( w == -1 )
     {
-        sprintf( buf, "%s - You do not know of such weapon type.\n\r", argument );
+        snprintf( buf, MSL, "%s - You do not know of such weapon type.\n\r", argument );
         send_to_char( buf, ch );
         return;
     }
     else if ( a == -1 )
     {
-        sprintf( buf, "%s - You do not know of such armor type.\n\r", arg2 );
+        snprintf( buf, MSL, "%s - You do not know of such armor type.\n\r", arg2 );
         send_to_char( buf, ch );
         return;
     }
@@ -5396,21 +5399,21 @@ void do_use( CHAR_DATA *ch, char *argument )
         else if ( obj->item_type == ITEM_SUIT )
             sprintf(cmd,"wear %s",argument);
         else if ( obj->item_type == ITEM_MEDPACK )
-            sprintf(cmd,"heal %s",arg);
+            snprintf(cmd,MSL,"heal %s",arg);
         else if ( obj->item_type == ITEM_TELEPORTER )
-            sprintf(cmd,"teleport %s",arg);
+            snprintf(cmd,MSL,"teleport %s",arg);
         else if ( obj->item_type == ITEM_IMPLANT )
-            sprintf(cmd,"implant %s",arg);
+            snprintf(cmd,MSL,"implant %s",arg);
         else if ( obj->item_type == ITEM_LOCATOR )
-            sprintf(cmd,"locate");
+            snprintf(cmd,MSL,"locate");
         else if ( obj->item_type == ITEM_ORE )
-            sprintf(cmd,"research %s",arg);
+            snprintf(cmd,MSL,"research %s",arg);
         else if ( obj->item_type == ITEM_PIECE )
-            sprintf(cmd,"connect %s",argument);
+            snprintf(cmd,MSL,"connect %s",argument);
         else if ( obj->item_type == ITEM_VEHICLE_UP )
-            sprintf(cmd,"vinstall %s",arg);
+            snprintf(cmd,MSL,"vinstall %s",arg);
         else if ( obj->item_type == ITEM_WEAPON_UP )
-            sprintf(cmd,"winstall %s",arg);
+            snprintf(cmd,MSL,"winstall %s",arg);
         else if ( obj->item_type == ITEM_BIOTUNNEL )
             sprintf(cmd,"settunnel %s",argument);
         else
@@ -5494,7 +5497,7 @@ void do_use( CHAR_DATA *ch, char *argument )
         send_to_char( "You must either be in a building, or specify an object to use.\n\r", ch );
         return;
     }
-    sprintf(buf, "Using command: %s\n\r", cmd );
+    snprintf(buf, MSL, "Using command: %s\n\r", cmd );
     send_to_char(buf,ch);
     interpret(ch,cmd);
     return;
@@ -5548,7 +5551,7 @@ void do_settunnel( CHAR_DATA *ch, char *argument )
 
     if ( ( obj = get_obj_here(ch,arg) ) == NULL )
     {
-        sprintf( buf,"You can't find a %s here.\n\r", arg );
+        snprintf( buf, MSL, "You can't find a %s here.\n\r", arg );
         send_to_char( buf,ch);
         return;
     }

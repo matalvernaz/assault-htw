@@ -155,5 +155,8 @@ void vehicle_free_destructor( VEHICLE_DATA * vdat );
         (item)->next = (freelist); \
         (item)->is_free = TRUE; /* This sets is_free flag */ \
         (freelist) = (item); \
+        _Pragma("GCC diagnostic push") \
+        _Pragma("GCC diagnostic ignored \"-Waddress\"") \
         if (freelist##_destructor)  freelist##_destructor(item); \
+        _Pragma("GCC diagnostic pop") \
     } while(0)

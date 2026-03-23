@@ -15,7 +15,7 @@ NOCRYPT =
 #IMC2 - Comment out to disable IMC2 support
 #IMC = 1
 #  -DDEBUG_MEM -DDEBUG_MEM_CORRUPT -DDEBUG_MEM_DUP_FREE
-C_FLAGS = -O0 -g3 -Wall -DACK_43 $(PROF) $(NOCRYPT) 
+C_FLAGS = -O0 -g3 -Wall -Wno-format-overflow -Wno-format-truncation -Werror -DACK_43 $(PROF) $(NOCRYPT)
 #C_FLAGS = -g3 -Wall ($PROF) $(NOCRYPT) -DOLD_RAND -Dunix
 #-DDEBUG_MEM -DDEBUG_MEM_CORRUPT
 # MCCP

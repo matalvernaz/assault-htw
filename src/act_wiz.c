@@ -322,15 +322,15 @@ void do_gitpull( CHAR_DATA *ch, char *arg)
 	}
   /* Read the output a line at a time - output it. */
   while (fgets(path, sizeof(path)-1, fp) != NULL) {
-    sprintf(buf, "%s%s", buf, path);
+    strncat(buf, path, sizeof(buf) - strlen(buf) - 1);
   }
   send_to_char(buf, ch);
   
   /* close */
   status = pclose(fp);
-  if(status == -1)
+  if(status == -1) {
 	send_to_char("GIT PULL failed.\r\n", ch);
-	
+  }
 	return;
 }
 
@@ -3076,7 +3076,7 @@ void do_resetpassword( CHAR_DATA *ch, char *argument )
 
     victim = get_char_world(ch, arg1);
 
-    if( victim == '\0' )
+    if( victim == NULL )
     {
         send_to_char( "This character is not playing at this time\n\r", ch);
         return;
@@ -3092,7 +3092,7 @@ void do_resetpassword( CHAR_DATA *ch, char *argument )
         return;
     }
 
-    if (  ( ch->pcdata->pwd != '\0' )
+    if (  ( ch->pcdata->pwd != NULL )
             && ( arg1[0] == '\0' || arg2[0] == '\0')  )
     {
         send_to_char( "Syntax: password <char> <new>.\n\r", ch );
@@ -3327,7 +3327,7 @@ void do_whoname( CHAR_DATA *ch, char *argument )
         int i,l;
         l = 9-nocol_strlen(argument);
         for (i=0; i<l; i++)
-            sprintf(argument,"%s ",argument);
+            strncat(argument, " ", MAX_INPUT_LENGTH - strlen(argument) - 1);
     }
 
     free_string( victim->pcdata->who_name );

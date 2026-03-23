@@ -143,7 +143,6 @@ void safe_strcat(int max_len,char * dest,char * source)
     int a;
     char c;
     char * orig_dest;
-    char * orig_source;
 
     if (dest == NULL && source == NULL)
         return;
@@ -161,7 +160,6 @@ void safe_strcat(int max_len,char * dest,char * source)
     }
 
     orig_dest=dest;
-    orig_source=source;
 
     while (*dest !='\0')                                    /* Check to see if dest is already over limit. */
         dest++;
@@ -806,7 +804,6 @@ char * str_mod( char * mod_string,  char *argument )
                 sprintf( arg1, "%s", temp );
             }
 
-            if ( arg1 != NULL)
             {
                 buf2 = str_dup( mod_string );
                 buf3 = buf2;

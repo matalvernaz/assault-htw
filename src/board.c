@@ -114,12 +114,10 @@ void do_show_contents( CHAR_DATA * ch, OBJ_DATA * obj )
 
     MESSAGE_DATA      *msg;
     BOARD_DATA        *board;
-    OBJ_INDEX_DATA    *pObj;
     char              buf[MAX_INPUT_LENGTH];
     int               cnt = 0;
     int               board_num;
 
-    pObj=obj->pIndexData;
     board_num=obj->value[3];
 
     /* First find the board, and if not there, create one. */
@@ -348,7 +346,6 @@ void do_delete( CHAR_DATA *ch, char * argument)
     OBJ_DATA       *   object;
     BOARD_DATA     *   board;
     MESSAGE_DATA   *   msg;
-    OBJ_INDEX_DATA *   pObj;
     int                vnum;
     int                mess_num;
     int                cnt=0;
@@ -382,7 +379,6 @@ void do_delete( CHAR_DATA *ch, char * argument)
         return;
     }
 
-    pObj=object->pIndexData;
     vnum=object->value[3];
 
     /* First find the board, and if not there, create one. */
@@ -452,7 +448,6 @@ void do_show_message( CHAR_DATA *ch ,int mess_num, OBJ_DATA * obj )
      */
 
     BOARD_DATA   * board;
-    OBJ_INDEX_DATA * pObj;
     int            vnum;
     MESSAGE_DATA * msg;
     int            cnt = 0;
@@ -462,7 +457,6 @@ void do_show_message( CHAR_DATA *ch ,int mess_num, OBJ_DATA * obj )
     char         * to_person;
     char           private_name[MAX_INPUT_LENGTH];
 
-    pObj=obj->pIndexData;
     vnum=obj->value[3];
 
     /* First find the board, and if not there, create one. */
@@ -525,7 +519,6 @@ void do_write( CHAR_DATA *ch, char *argument )
     OBJ_DATA       *   object;
     BOARD_DATA     *   board;
     MESSAGE_DATA   *   msg;
-    OBJ_INDEX_DATA *   pObj;
     int                vnum;
     extern char        str_empty[1];
     char buf[MAX_STRING_LENGTH];
@@ -555,7 +548,6 @@ void do_write( CHAR_DATA *ch, char *argument )
         return;
     }
 
-    pObj=object->pIndexData;
     vnum=object->value[3];
     /* First find the board, and if not there, create one. */
     for (board=first_board; board != NULL; board=board->next)
@@ -681,13 +673,11 @@ void do_edit_message( CHAR_DATA *ch ,int mess_num, OBJ_DATA * obj )
      */
 
     BOARD_DATA   * board;
-    OBJ_INDEX_DATA * pObj;
     int            vnum;
     MESSAGE_DATA * msg;
     int            cnt = 0;
     bool           mfound = FALSE;
 
-    pObj=obj->pIndexData;
     vnum=obj->value[3];
 
     /* First find the board, and if not there, create one. */
