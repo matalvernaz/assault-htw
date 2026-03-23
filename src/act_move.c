@@ -592,6 +592,82 @@ void do_west( CHAR_DATA *ch, char *argument )
     return;
 }
 
+void do_walk( CHAR_DATA *ch, char *argument )
+{
+    #define WALK_MAX 50
+    const char *p;
+    int total = 0;
+    char buf[MAX_STRING_LENGTH];
+
+    if ( argument[0] == '\0' )
+    {
+        send_to_char( "Syntax: walk <directions>  e.g. walk 10n20e\n\r", ch );
+        send_to_char( "  Directions: n s e w  (max 50 tiles total)\n\r", ch );
+        return;
+    }
+
+    if ( COMBAT_LAG(ch) )
+    {
+        send_to_char( "You cannot speedwalk while in combat.\n\r", ch );
+        return;
+    }
+
+    if ( ch->z != Z_GROUND )
+    {
+        send_to_char( "You can only walk on the ground.\n\r", ch );
+        return;
+    }
+
+    p = argument;
+    while ( *p != '\0' && total < WALK_MAX )
+    {
+        int count = 0;
+        int dir   = -1;
+        int ox, oy;
+
+        /* optional number */
+        while ( *p >= '0' && *p <= '9' )
+        {
+            count = count * 10 + (*p - '0');
+            p++;
+        }
+        if ( count == 0 ) count = 1;
+
+        /* direction letter */
+        switch ( *p )
+        {
+            case 'n': case 'N': dir = DIR_NORTH; p++; break;
+            case 's': case 'S': dir = DIR_SOUTH; p++; break;
+            case 'e': case 'E': dir = DIR_EAST;  p++; break;
+            case 'w': case 'W': dir = DIR_WEST;  p++; break;
+            default:
+                sprintf( buf, "Unknown direction '%c'. Use n, s, e, w.\n\r", *p );
+                send_to_char( buf, ch );
+                return;
+        }
+
+        count = UMIN( count, WALK_MAX - total );
+
+        while ( count > 0 )
+        {
+            ox = ch->x;
+            oy = ch->y;
+            move_char( ch, dir );
+            if ( ch->x == ox && ch->y == oy )
+            {
+                send_to_char( "Your path is blocked.\n\r", ch );
+                return;
+            }
+            total++;
+            count--;
+        }
+    }
+
+    if ( total >= WALK_MAX )
+        send_to_char( "You reach the 50-tile walk limit.\n\r", ch );
+    #undef WALK_MAX
+}
+
 void do_scan( CHAR_DATA *ch, char *argument )
 {
     CHAR_DATA *wch;
@@ -1279,6 +1355,29 @@ void move( CHAR_DATA *ch, int x, int y, int z )
     ch->next_in_room = map_ch[ch->x][ch->y][ch->z];
     map_ch[ch->x][ch->y][ch->z] = ch;
     ch->in_building = map_bld[ch->x][ch->y][ch->z];
+
+    /* Exploration achievement: award QP on first visit to each terrain type */
+    if ( !IS_NPC(ch) && ch->pcdata != NULL && z < Z_SPACE )
+    {
+        int sect = map_table.type[x][y][z];
+        if ( sect > 0 && sect < SECT_MAX && !IS_SET(ch->pcdata->explored, 1 << sect) )
+        {
+            static const char *sect_names[] = {
+                "", "rock", "sand", "hills", "mountain",
+                "water", "snow", "open field", "forest", "lava",
+                "burned wasteland", "blizzard", "ash field",
+                "air", "underground", "ice", "magma", "ocean"
+            };
+            char xbuf[256];
+            SET_BIT(ch->pcdata->explored, 1 << sect);
+            ch->quest_points += 5;
+            snprintf( xbuf, sizeof(xbuf),
+                "@@G[Explorer] First time on %s terrain! +5 QP@@N\n\r",
+                sect_names[sect] );
+            send_to_char( xbuf, ch );
+        }
+    }
+
     if ( ch->position == POS_NUKEM )
         ch->position = POS_STANDING;
     if ( ch->victim != ch )

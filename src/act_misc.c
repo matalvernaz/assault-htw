@@ -3260,6 +3260,86 @@ void do_destroy( CHAR_DATA *ch, char *argument )
     return;
 }
 
+/*
+ * do_salvage: scavenge small resource amounts from ruined terrain.
+ * Usable on: SECT_BURNED, SECT_ASH, SECT_LAVA, SECT_MAGMA.
+ * 5-minute cooldown between attempts.
+ */
+void do_salvage( CHAR_DATA *ch, char *argument )
+{
+    OBJ_DATA *obj;
+    int sect;
+    int resource_type;
+    int amount;
+    char buf[MSL];
+
+    if ( IS_NPC(ch) )
+        return;
+
+    if ( ch->in_building )
+    {
+        send_to_char( "You can't salvage from inside a building.\n\r", ch );
+        return;
+    }
+
+    if ( ch->in_vehicle )
+    {
+        send_to_char( "Dismount your vehicle before salvaging.\n\r", ch );
+        return;
+    }
+
+    if ( ch->salvage_timer > 0 )
+    {
+        snprintf( buf, sizeof(buf),
+            "You need to wait %d second%s before salvaging again.\n\r",
+            ch->salvage_timer / 10,
+            ch->salvage_timer / 10 == 1 ? "" : "s" );
+        send_to_char( buf, ch );
+        return;
+    }
+
+    sect = map_table.type[ch->x][ch->y][ch->z];
+
+    if ( sect != SECT_BURNED && sect != SECT_ASH
+      && sect != SECT_LAVA   && sect != SECT_MAGMA )
+    {
+        send_to_char( "There's nothing here worth salvaging. Try burned, ash, lava, or magma terrain.\n\r", ch );
+        return;
+    }
+
+    /* Pick what you find based on terrain */
+    if ( sect == SECT_LAVA || sect == SECT_MAGMA )
+    {
+        /* Volcanic terrain yields rock or copper */
+        resource_type = (number_percent() < 60) ? ITEM_ROCK : ITEM_COPPER;
+    }
+    else
+    {
+        /* Burned/ash terrain yields iron or rock */
+        resource_type = (number_percent() < 60) ? ITEM_IRON : ITEM_ROCK;
+    }
+
+    /* Small random haul: 1-10 units */
+    amount = number_range(1, 10);
+
+    obj = create_material( resource_type );
+    obj->value[1] = amount;
+    obj->weight   = obj->weight * amount;
+    obj_to_char( obj, ch );
+
+    snprintf( buf, sizeof(buf),
+        "You sift through the rubble and recover %d unit%s of %s.\n\r",
+        amount,
+        amount == 1 ? "" : "s",
+        resource_type == ITEM_IRON   ? "@@diron@@N"   :
+        resource_type == ITEM_COPPER ? "@@ycopper@@N" : "@@drock@@N" );
+    send_to_char( buf, ch );
+
+    /* 5-minute cooldown (10 pulses/sec * 60 * 5 = 3000) */
+    ch->salvage_timer = 3000;
+    return;
+}
+
 void do_refine( CHAR_DATA *ch, char *argument )
 {
     BUILDING_DATA *bld;
@@ -5611,5 +5691,90 @@ void show_pager(CHAR_DATA *ch)
 void do_pager(CHAR_DATA *ch,char *argument)
 {
     show_pager(ch);
+    return;
+}
+
+/*
+ * do_bounty: place a QP bounty on another player's head.
+ *   bounty              - list all online players with active bounties
+ *   bounty <player> <amount> - spend QP to add to a player's bounty
+ *
+ * Bounty is collected automatically when the target is killed (see fight.c).
+ */
+void do_bounty( CHAR_DATA *ch, char *argument )
+{
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    CHAR_DATA *victim;
+    int amount;
+    char buf[MSL];
+
+    if ( IS_NPC(ch) )
+        return;
+
+    argument = one_argument( argument, arg1 );
+    one_argument( argument, arg2 );
+
+    if ( arg1[0] == '\0' )
+    {
+        bool found = FALSE;
+        send_to_char( "@@W=== Active Bounties (online players) ===@@N\n\r", ch );
+        for ( victim = first_char; victim; victim = victim->next )
+        {
+            if ( IS_NPC(victim) || victim->pcdata->bounty <= 0 )
+                continue;
+            snprintf( buf, sizeof(buf), "  @@R%-20s  @@y%d QP@@N\n\r",
+                victim->name, victim->pcdata->bounty );
+            send_to_char( buf, ch );
+            found = TRUE;
+        }
+        if ( !found )
+            send_to_char( "No bounties currently active on online players.\n\r", ch );
+        return;
+    }
+
+    if ( arg2[0] == '\0' || !is_number(arg2) )
+    {
+        send_to_char( "Usage: bounty [<player> <amount>]\n\r", ch );
+        return;
+    }
+
+    amount = atoi( arg2 );
+    if ( amount <= 0 )
+    {
+        send_to_char( "Bounty amount must be positive.\n\r", ch );
+        return;
+    }
+
+    if ( amount > ch->quest_points )
+    {
+        send_to_char( "You don't have enough QP.\n\r", ch );
+        return;
+    }
+
+    if ( ( victim = get_char_world( ch, arg1 ) ) == NULL || IS_NPC(victim) )
+    {
+        send_to_char( "That player is not online.\n\r", ch );
+        return;
+    }
+
+    if ( victim == ch )
+    {
+        send_to_char( "You can't place a bounty on yourself.\n\r", ch );
+        return;
+    }
+
+    ch->quest_points       -= amount;
+    victim->pcdata->bounty += amount;
+
+    snprintf( buf, sizeof(buf),
+        "You place a @@y%d QP@@N bounty on @@R%s@@N. Your QP: %d.\n\r",
+        amount, victim->name, ch->quest_points );
+    send_to_char( buf, ch );
+
+    snprintf( buf, sizeof(buf),
+        "@@RA bounty of %d QP has been placed on your head!@@N\n\r",
+        amount );
+    send_to_char( buf, victim );
     return;
 }

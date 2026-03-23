@@ -603,6 +603,7 @@ struct  char_data
     sh_int              spectimer;
     sh_int              timer;
     sh_int              trust;
+    sh_int              salvage_timer;
     sh_int              wait;
     time_t              last_note;
     time_t              logon;
@@ -679,6 +680,8 @@ struct  pc_data
     int     experience;
     //    bool	built[MAX_POSSIBLE_BUILDING];
     int     guess;
+    int     explored;           /* bitmask: one bit per SECT_* terrain type visited */
+    int     bounty;             /* gold bounty on this player's head */
     PAGER_DATA  * pager;
 };
 
@@ -877,7 +880,8 @@ void do_readrelevel( FILE * fp, RELEVEL_DATA * pRelevel );
 /* Relevel DATA */
 struct system_data {
     RELEVEL_DATA   * pRelevelList;
-} rlvldata;
+};
+extern struct system_data rlvldata;
 
 struct relevel_data {
     RELEVEL_DATA   * pNext;

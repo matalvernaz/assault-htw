@@ -1239,6 +1239,8 @@ void aggr_update( void )
             wch->spectimer--;
         if ( wch->killtimer > 0 )
             wch->killtimer--;
+        if ( wch->salvage_timer > 0 )
+            wch->salvage_timer--;
 
         if ( IS_BUSY( wch ) )
         {

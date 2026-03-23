@@ -2173,6 +2173,18 @@ bool check_dead( CHAR_DATA *ch, CHAR_DATA *victim )
                         if ( ch->pcdata->alliance > -1 && victim->pcdata->alliance > -1 )
                             alliance_table[ch->pcdata->alliance].kills++;
                         gain_exp(ch,vrank);
+                        /* Bounty payout */
+                        if ( victim->pcdata->bounty > 0 )
+                        {
+                            int collected = victim->pcdata->bounty;
+                            victim->pcdata->bounty = 0;
+                            ch->quest_points += collected;
+                            if ( ch->quest_points > 5000 )
+                                ch->quest_points = 5000;
+                            sprintf( buf, "@@y[Bounty] You collected %d QP for killing %s!@@N\n\r",
+                                collected, victim->name );
+                            send_to_char( buf, ch );
+                        }
                         if ( sysdata.killfest || sysdata.qpmode > 0 )
                         {
                             ch->quest_points += vrank * 10;

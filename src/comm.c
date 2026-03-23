@@ -193,7 +193,7 @@ int close args( ( int fd ) );
  int     getpeername     args( ( int s, struct sockaddr *name, int *namelen ) );
  int     getsockname     args( ( int s, struct sockaddr *name, int *namelen ) );
  */
-int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) );
+/* int gettimeofday args( ( struct timeval *tp, struct timezone *tzp ) ); */
 /*
  int     listen          args( ( int s, int backlog ) );
  */
@@ -417,7 +417,7 @@ int main(int argc, char **argv) {
 	 */
 	gettimeofday(&now_time, NULL);
 	current_time = (time_t) now_time.tv_sec;
-	strcpy(str_boot_time, ctime(&current_time));
+	snprintf(str_boot_time, sizeof(str_boot_time), "%s", ctime(&current_time));
 
 	/*
 	 * Macintosh console initialization.
@@ -1529,9 +1529,9 @@ void read_from_buffer(DESCRIPTOR_DATA *d) {
 	 * Do '!' substitution.
 	 */
 	if (d->incomm[0] == '!')
-		strcpy(d->incomm, d->inlast);
+		snprintf(d->incomm, sizeof(d->incomm), "%s", d->inlast);
 	else
-		strcpy(d->inlast, d->incomm);
+		snprintf(d->inlast, sizeof(d->inlast), "%s", d->incomm);
 
 	while (d->inbuf[i] == '\n' || d->inbuf[i] == '\r')
 		i++;
@@ -2286,7 +2286,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument) {
 					continue;
 				if (IS_NPC(wch))
 					continue;
-				if (can_multiplay(wch) || wch->fake)
+				if (can_multiplay(wch) || wch->fake || IS_SET(wch->pcdata->pflags, PFLAG_MULTIPLAY))
 					continue;
 				if (!str_cmp(d->host, wch->pcdata->host) && (wch->trust < 80)) {
 					char buf[MSL] = "\0";
@@ -2307,7 +2307,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument) {
 					continue;
 				if (!str_cmp(wch->name, argument))
 					continue;
-				if (can_multiplay(wch) || wch->fake)
+				if (can_multiplay(wch) || wch->fake || IS_SET(wch->pcdata->pflags, PFLAG_MULTIPLAY))
 					continue;
 				if (!str_cmp(d->host, wch->pcdata->host) && (wch->trust < 80)) {
 					char buf[MSL] = "\0";
@@ -2987,6 +2987,24 @@ void nanny(DESCRIPTOR_DATA *d, char *argument) {
 					obj_to_char(obj, ch);
 					obj = create_object(get_obj_index(32658), 0);
 					obj_to_char(obj, ch);
+
+					/* Starter resource kit so new players can place an HQ immediately */
+					{
+						OBJ_DATA *res;
+						res = create_material(ITEM_IRON);
+						res->value[1] = 50;
+						res->weight = res->weight * res->value[1];
+						obj_to_char(res, ch);
+						res = create_material(ITEM_ROCK);
+						res->value[1] = 30;
+						res->weight = res->weight * res->value[1];
+						obj_to_char(res, ch);
+						res = create_material(ITEM_COPPER);
+						res->value[1] = 20;
+						res->weight = res->weight * res->value[1];
+						obj_to_char(res, ch);
+					}
+					send_to_char( "@@G[Starter Kit] You have been given some iron, rock, and copper to get your base started!@@N\n\r", ch );
 					move(ch, x, y, ch->z);
 				} else {
 					BUILDING_DATA *bld;
@@ -3907,7 +3925,7 @@ void _mcleanup(void);
 void do_hotreboot(CHAR_DATA *ch, char * argument) {
 	FILE *fp;
 	DESCRIPTOR_DATA *d, *d_next;
-	char buf[100], buf2[100];
+	char buf[MSL], buf2[100];
 	extern int saving_area;
 	bool compress;
 	bool silent = FALSE;
@@ -3982,18 +4000,16 @@ void do_hotreboot(CHAR_DATA *ch, char * argument) {
 	}
 
 	if (crash)
-		sprintf(buf,
-				"\n\r**** ATTEMPTING CRASH RECOVERY - HOLD ON TO YOUR HORSES ****%s\n\n\r",
-				"");
+		snprintf(buf, sizeof(buf),
+				"\n\r**** ATTEMPTING CRASH RECOVERY - HOLD ON TO YOUR HORSES ****\n\n\r");
 	else if (cust == 1)
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 				"\n\rYou notice a black cat walking past... And then another one, just like it!\n\rTrinity faces you and says, \"It's a glitch in the Matrix, it happens when they change something!\"\n\r");
 	else if (msg)
-		sprintf(buf, "\n\r%s\n\r", argument);
+		snprintf(buf, sizeof(buf), "\n\r%s\n\r", argument);
 	else
-		sprintf(buf,
-				"\n\r**** HOTreboot by An Immortal - Please remain ONLINE ****\n\r*********** We will be back in a few seconds!! *************%s\n\n\r",
-				"");
+		snprintf(buf, sizeof(buf),
+				"\n\r**** HOTreboot by An Immortal - Please remain ONLINE ****\n\r*********** We will be back in a few seconds!! *************\n\n\r");
 
 	/* For each PLAYING descriptor( non-negative ), save its state */
 	for (d = first_desc; d; d = d_next) {

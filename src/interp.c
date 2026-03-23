@@ -81,6 +81,9 @@ const   struct  cmd_type        cmd_table       [] =
         "west",           do_west,        POS_SNEAKING,    0,  LOG_NORMAL,        C_TYPE_ACTION, C_SHOW_ALWAYS
     },
     {
+        "walk",           do_walk,        POS_STANDING,    0,  LOG_NORMAL,        C_TYPE_ACTION, C_SHOW_ALWAYS
+    },
+    {
         "look",           do_look,        POS_RESTING,     0,  LOG_NORMAL,        C_TYPE_INFO, C_SHOW_ALWAYS
     },
     {
@@ -91,6 +94,12 @@ const   struct  cmd_type        cmd_table       [] =
     },
     {
         "score",          do_score,       POS_DEAD,        0,  LOG_NORMAL,        C_TYPE_INFO, C_SHOW_ALWAYS
+    },
+    {
+        "base",           do_base,        POS_DEAD,        0,  LOG_NORMAL,        C_TYPE_INFO, C_SHOW_ALWAYS
+    },
+    {
+        "bounty",         do_bounty,      POS_DEAD,        0,  LOG_NORMAL,        C_TYPE_INFO, C_SHOW_ALWAYS
     },
     {
         "tell",           do_tell,        POS_RESTING,     0,  LOG_NORMAL,        C_TYPE_COMM, C_SHOW_ALWAYS
@@ -537,6 +546,10 @@ const   struct  cmd_type        cmd_table       [] =
         C_TYPE_ACTION, C_SHOW_ALWAYS
     },
     {
+        "salvage",    do_salvage, POS_STANDING,    0,  LOG_NORMAL,
+        C_TYPE_ACTION, C_SHOW_ALWAYS
+    },
+    {
         "move",           do_space_move,  POS_STANDING,    0,   LOG_NORMAL,
         C_TYPE_ACTION, C_SHOW_ALWAYS
     },
@@ -967,6 +980,10 @@ const   struct  cmd_type        cmd_table       [] =
         C_TYPE_IMM, C_SHOW_ALWAYS
     },
     {
+        "bprint",         do_bprint,  POS_STANDING, 83, LOG_NORMAL,
+        C_TYPE_IMM, C_SHOW_ALWAYS
+    },
+    {
         "bmove",           do_move,        POS_DEAD,    85,   LOG_NORMAL,
         C_TYPE_IMM, C_SHOW_ALWAYS
     },
@@ -1019,6 +1036,10 @@ const   struct  cmd_type        cmd_table       [] =
     },
     {
         "freeze",         do_freeze,      POS_DEAD,    85,  LOG_ALWAYS,
+        C_TYPE_IMM, C_SHOW_ALWAYS
+    },
+    {
+        "setmulti",       do_setmulti,    POS_DEAD,    85,  LOG_ALWAYS,
         C_TYPE_IMM, C_SHOW_ALWAYS
     },
 	{
@@ -1317,6 +1338,10 @@ const   struct  cmd_type        cmd_table       [] =
         C_TYPE_IMM, C_SHOW_ALWAYS
     },
     {
+        "rload",          do_rload,       POS_DEAD,    83,  LOG_ALWAYS,
+        C_TYPE_IMM, C_SHOW_ALWAYS
+    },
+    {
         "oset",           do_oset,        POS_DEAD,    83,  LOG_ALWAYS,
         C_TYPE_IMM, C_SHOW_ALWAYS
     },
@@ -1375,6 +1400,10 @@ const   struct  cmd_type        cmd_table       [] =
     {
         "slay",           do_slay,        POS_DEAD,    85,  LOG_ALWAYS,
         C_TYPE_IMM, C_SHOW_ALWAYS
+    },
+    {
+        "sfind",          do_sfind,       POS_DEAD,      0,  LOG_NORMAL,
+        C_TYPE_INFO, C_SHOW_ALWAYS
     },
     {
         "snoop",          do_snoop,       POS_DEAD,    83,  LOG_ALWAYS,

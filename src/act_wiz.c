@@ -43,12 +43,15 @@
 #include <fcntl.h>
 #include <gd.h>
 
+#include <math.h>
 #include "ack.h"
 #include "tables.h"
 
 #ifndef DEC_EMAIL_H
 #include "email.h"
 #endif
+
+struct system_data rlvldata;
 
 DECLARE_DO_FUN(do_gitpull);
 
@@ -338,6 +341,34 @@ void do_wizhelp( CHAR_DATA *ch, char *argument )
     int cmd, imm_level;
     int col = 0;
     bool creturn = TRUE;
+
+    /* wizhelp <command>: show help entry for that specific command */
+    if ( argument[0] != '\0' )
+    {
+        /* First check the command exists in cmd_table and show meta-info */
+        bool found = FALSE;
+        for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ )
+        {
+            if ( str_prefix( argument, cmd_table[cmd].name ) )
+                continue;
+            snprintf( buf, sizeof(buf),
+                "@@W[Command: @@y%-14s@@W  Min Trust: @@y%d@@W  Min Position: @@y%d@@W]@@N\n\r",
+                cmd_table[cmd].name,
+                cmd_table[cmd].level,
+                cmd_table[cmd].position );
+            send_to_char( buf, ch );
+            found = TRUE;
+            break;
+        }
+        if ( !found )
+        {
+            snprintf( buf, sizeof(buf), "No command named '%s' found.\n\r", argument );
+            send_to_char( buf, ch );
+        }
+        /* Then show the help entry (if any) */
+        do_help( ch, argument );
+        return;
+    }
 
     buf1[0] = '\0';
 
@@ -1655,6 +1686,50 @@ void do_restore( CHAR_DATA *ch, char *argument )
     update_pos( victim );
     act( "$n kindly restores you.", ch, NULL, victim, TO_VICT );
     send_to_char( "Ok.\n\r", ch );
+    return;
+}
+
+void do_setmulti( CHAR_DATA *ch, char *argument )
+{
+    CHAR_DATA *victim;
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_INPUT_LENGTH];
+
+    one_argument( argument, arg );
+
+    if ( arg[0] == '\0' )
+    {
+        send_to_char( "Syntax: setmulti <player>\n\r", ch );
+        return;
+    }
+
+    if ( ( victim = get_char_world( ch, arg ) ) == NULL )
+    {
+        send_to_char( "They aren't here.\n\r", ch );
+        return;
+    }
+
+    if ( IS_NPC(victim) )
+    {
+        send_to_char( "Not on NPCs.\n\r", ch );
+        return;
+    }
+
+    if ( IS_SET(victim->pcdata->pflags, PFLAG_MULTIPLAY) )
+    {
+        REMOVE_BIT(victim->pcdata->pflags, PFLAG_MULTIPLAY);
+        sprintf( buf, "%s can no longer multi-login from the same IP.\n\r", victim->name );
+        send_to_char( buf, ch );
+        act( "@@eYour multi-login permission has been revoked.@@N", ch, NULL, victim, TO_VICT );
+    }
+    else
+    {
+        SET_BIT(victim->pcdata->pflags, PFLAG_MULTIPLAY);
+        sprintf( buf, "%s may now have multiple characters logged in from the same IP.\n\r", victim->name );
+        send_to_char( buf, ch );
+        act( "@@aYou have been granted multi-login permission.@@N", ch, NULL, victim, TO_VICT );
+    }
+    save_char_obj( victim );
     return;
 }
 
@@ -4890,6 +4965,185 @@ void do_bmake( CHAR_DATA *ch, char *argument )
     return;
 }
 
+void do_bprint( CHAR_DATA *ch, char *argument )
+{
+    BUILDING_DATA *bld;
+    OBJ_DATA *obj;
+    CHAR_DATA *target;
+    char buf[MAX_STRING_LENGTH];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
+    int level;
+    int btype = -1;
+    const char *bname = NULL;
+    int i;
+
+    argument = one_argument( argument, arg1 );
+    argument = one_argument( argument, arg2 );
+    one_argument( argument, arg3 );
+
+    if ( arg1[0] == '\0' )
+    {
+        send_to_char( "Syntax: bprint [building] [player] [level]\n\r", ch );
+        send_to_char( "  building: optional building type name (e.g. barracks, mine)\n\r", ch );
+        send_to_char( "  If omitted, uses the building you are currently inside.\n\r", ch );
+        return;
+    }
+
+    /* Check if arg1 is a building type name */
+    for ( i = 0; i < MAX_POSSIBLE_BUILDING; i++ )
+    {
+        if ( build_table[i].name != NULL && build_table[i].name[0] != '\0'
+             && !str_prefix( arg1, build_table[i].name ) )
+        {
+            btype = build_table[i].type;
+            bname = build_table[i].name;
+            break;
+        }
+    }
+
+    if ( btype != -1 )
+    {
+        /* Building type specified — no need to be inside one.
+           Remaining args: [player] [level] */
+        if ( arg2[0] == '\0' || is_number( arg2 ) )
+        {
+            target = ch;
+            level  = arg2[0] != '\0' ? atoi(arg2) : 2;
+        }
+        else
+        {
+            if ( ( target = get_char_world( ch, arg2 ) ) == NULL )
+            {
+                send_to_char( "No such player found.\n\r", ch );
+                return;
+            }
+            level = arg3[0] != '\0' ? atoi(arg3) : 2;
+        }
+    }
+    else
+    {
+        /* arg1 is not a building name — treat as player/level and use current building */
+        if ( ( bld = get_char_building(ch) ) == NULL )
+        {
+            send_to_char( "You must be in a building (or specify a building type) to create a blueprint.\n\r", ch );
+            return;
+        }
+        btype = bld->type;
+        bname = bld->name;
+
+        if ( is_number( arg1 ) )
+        {
+            target = ch;
+            level  = atoi(arg1);
+        }
+        else
+        {
+            if ( ( target = get_char_world( ch, arg1 ) ) == NULL )
+            {
+                send_to_char( "No such player or building type found.\n\r", ch );
+                return;
+            }
+            level = arg2[0] != '\0' ? atoi(arg2) : (bld->level + 1);
+        }
+    }
+
+    level = URANGE(2, level, 5);
+
+    obj = create_object( get_obj_index( OBJ_VNUM_BLUEPRINTS ), 0 );
+    obj->level = level;
+    obj->value[0] = btype;
+    sprintf( buf, "Blueprints for %d%s level %s", level,
+        (level == 2) ? "nd" : (level == 3) ? "rd" : "th",
+        capitalize(bname) );
+    free_string( obj->short_descr );
+    free_string( obj->description );
+    free_string( obj->name );
+    obj->short_descr = str_dup(buf);
+    obj->description = str_dup(buf);
+    sprintf( buf, "Blueprint %s %d%s", bname, level,
+        (level == 2) ? "nd" : (level == 3) ? "rd" : "th" );
+    obj->name = str_dup(buf);
+    obj_to_char(obj, target);
+    if ( target == ch )
+        send_to_char( "Blueprint created and placed in your inventory.\n\r", ch );
+    else
+    {
+        send_to_char( "Blueprint created and placed in their inventory.\n\r", ch );
+        act( "$n creates a blueprint and hands it to you.", ch, NULL, target, TO_VICT );
+    }
+    return;
+}
+
+void do_rload( CHAR_DATA *ch, char *argument )
+{
+    OBJ_DATA *obj;
+    CHAR_DATA *target;
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
+    int type = -1;
+    int qty = 1;
+
+    argument = one_argument( argument, arg1 );
+    argument = one_argument( argument, arg2 );
+    one_argument( argument, arg3 );
+
+    if ( arg1[0] == '\0' )
+    {
+        send_to_char( "Syntax: rload <resource> [quantity] [player]\n\r", ch );
+        send_to_char( "Resources: iron skin copper gold silver rock stick log\n\r", ch );
+        return;
+    }
+
+    if      ( !str_prefix( arg1, "iron"   ) ) type = ITEM_IRON;
+    else if ( !str_prefix( arg1, "skin"   ) ) type = ITEM_SKIN;
+    else if ( !str_prefix( arg1, "copper" ) ) type = ITEM_COPPER;
+    else if ( !str_prefix( arg1, "gold"   ) ) type = ITEM_GOLD;
+    else if ( !str_prefix( arg1, "silver" ) ) type = ITEM_SILVER;
+    else if ( !str_prefix( arg1, "rock"   ) ) type = ITEM_ROCK;
+    else if ( !str_prefix( arg1, "stick"  ) ) type = ITEM_STICK;
+    else if ( !str_prefix( arg1, "log"    ) ) type = ITEM_LOG;
+
+    if ( type == -1 )
+    {
+        send_to_char( "Unknown resource. Try: iron skin copper gold silver rock stick log\n\r", ch );
+        return;
+    }
+
+    if ( arg2[0] != '\0' )
+        qty = UMAX(1, atoi(arg2));
+
+    target = ch;
+    if ( arg3[0] != '\0' )
+    {
+        if ( ( target = get_char_world( ch, arg3 ) ) == NULL )
+        {
+            send_to_char( "No such player found.\n\r", ch );
+            return;
+        }
+    }
+
+    while ( qty > 0 )
+    {
+        int chunk = UMIN(qty, 20000);
+        obj = create_material( type );
+        obj->value[1] = chunk;
+        obj_to_char( obj, target );
+        qty -= chunk;
+    }
+
+    if ( target == ch )
+        send_to_char( "Resources loaded into your inventory.\n\r", ch );
+    else
+    {
+        send_to_char( "Resources loaded into their inventory.\n\r", ch );
+        act( "$n loads some resources into your inventory.", ch, NULL, target, TO_VICT );
+    }
+    return;
+}
+
 void do_objclear( CHAR_DATA *ch, char *argument )
 {
     OBJ_DATA *obj;
@@ -6285,6 +6539,160 @@ sect_color_type sect_show[SECT_MAX] = {
 #define SECT_MAGMA          16
 #define SECT_OCEAN			17
  */
+
+static const char *sfind_direction( int dx, int dy )
+{
+    /* x increases going EAST, y increases going NORTH */
+    int ax = abs(dx), ay = abs(dy);
+    if ( ax == 0 && ay == 0 ) return "here";
+    if ( ax == 0 )             return dy > 0 ? "north"     : "south";
+    if ( ay == 0 )             return dx > 0 ? "east"      : "west";
+    if ( ax > ay * 2 )         return dx > 0 ? "east"      : "west";
+    if ( ay > ax * 2 )         return dy > 0 ? "north"     : "south";
+    if ( dx > 0 )              return dy > 0 ? "northeast" : "southeast";
+    return                            dy > 0 ? "northwest" : "southwest";
+}
+
+void do_sfind( CHAR_DATA *ch, char *argument )
+{
+    static const struct { const char *name; int sect; } sect_names[] = {
+        { "rock",      SECT_ROCK           },
+        { "sand",      SECT_SAND           },
+        { "hills",     SECT_HILLS          },
+        { "mountain",  SECT_MOUNTAIN       },
+        { "water",     SECT_WATER          },
+        { "snow",      SECT_SNOW           },
+        { "field",     SECT_FIELD          },
+        { "forest",    SECT_FOREST         },
+        { "lava",      SECT_LAVA           },
+        { "burned",    SECT_BURNED         },
+        { "blizzard",  SECT_SNOW_BLIZZARD  },
+        { "ash",       SECT_ASH            },
+        { "ice",       SECT_ICE            },
+        { "magma",     SECT_MAGMA          },
+        { "ocean",     SECT_OCEAN          },
+        { NULL, 0 }
+    };
+
+    struct sfind_result { int x; int y; int dist; } results[10];
+    char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    const char *sect_name = NULL;
+    int target_sect = -1;
+    int max_dist = ch->map;
+    int nresults = 0;
+    int bx1, bx2, by1, by2;
+    int x, y, dx, dy, dist, i;
+
+    argument = one_argument( argument, arg1 );
+    one_argument( argument, arg2 );
+
+    if ( arg1[0] == '\0' )
+    {
+        send_to_char( "Syntax: sfind <terrain>\n\r"
+                      "Types:  rock sand hills mountain water snow field forest\n\r"
+                      "        lava burned blizzard ash ice magma ocean\n\r", ch );
+        return;
+    }
+
+    for ( i = 0; sect_names[i].name != NULL; i++ )
+    {
+        if ( !str_prefix( arg1, sect_names[i].name ) )
+        {
+            target_sect = sect_names[i].sect;
+            sect_name   = sect_names[i].name;
+            break;
+        }
+    }
+
+    if ( target_sect == -1 )
+    {
+        send_to_char( "Unknown terrain type. Try: rock sand hills mountain water snow field\n\r"
+                      "  forest lava burned blizzard ash ice magma ocean\n\r", ch );
+        return;
+    }
+
+    if ( arg2[0] != '\0' )
+        max_dist = URANGE( 1, atoi(arg2), 25 );  /* 25 = max map size */
+
+    if ( ch->z != Z_GROUND )
+    {
+        send_to_char( "You can only search for terrain from the ground.\n\r", ch );
+        return;
+    }
+
+    bx1 = UMAX( 0, ch->x - max_dist );
+    bx2 = UMIN( MAX_MAPS - 1, ch->x + max_dist );
+    by1 = UMAX( 0, ch->y - max_dist );
+    by2 = UMIN( MAX_MAPS - 1, ch->y + max_dist );
+
+    for ( x = bx1; x <= bx2; x++ )
+    {
+        for ( y = by1; y <= by2; y++ )
+        {
+            if ( map_table.type[x][y][Z_GROUND] != target_sect )
+                continue;
+
+            dx   = x - ch->x;
+            dy   = y - ch->y;
+            dist = (int)sqrt( (double)(dx*dx + dy*dy) );
+
+            if ( dist > max_dist )
+                continue;
+
+            if ( nresults < 10 )
+            {
+                results[nresults].x    = x;
+                results[nresults].y    = y;
+                results[nresults].dist = dist;
+                nresults++;
+                /* insertion-sort into ascending distance order */
+                for ( i = nresults - 1; i > 0 && results[i].dist < results[i-1].dist; i-- )
+                {
+                    struct sfind_result tmp = results[i];
+                    results[i]   = results[i-1];
+                    results[i-1] = tmp;
+                }
+            }
+            else if ( dist < results[9].dist )
+            {
+                results[9].x    = x;
+                results[9].y    = y;
+                results[9].dist = dist;
+                for ( i = 9; i > 0 && results[i].dist < results[i-1].dist; i-- )
+                {
+                    struct sfind_result tmp = results[i];
+                    results[i]   = results[i-1];
+                    results[i-1] = tmp;
+                }
+            }
+        }
+    }
+
+    if ( nresults == 0 )
+    {
+        sprintf( buf, "No %s terrain found within %d of your position (%d/%d).\n\r",
+                 sect_name, max_dist, ch->x, ch->y );
+        send_to_char( buf, ch );
+        return;
+    }
+
+    sprintf( buf, "Nearest %s terrain (from %d/%d, radius %d):\n\r",
+             sect_name, ch->x, ch->y, max_dist );
+    send_to_char( buf, ch );
+
+    for ( i = 0; i < nresults; i++ )
+    {
+        dx = results[i].x - ch->x;
+        dy = results[i].y - ch->y;
+        sprintf( buf, "  %d/%d  -- %d tiles %s\n\r",
+                 results[i].x, results[i].y,
+                 results[i].dist,
+                 sfind_direction( dx, dy ) );
+        send_to_char( buf, ch );
+    }
+}
+
 void save_map_png( )
 {
    gdImagePtr im;
@@ -6314,7 +6722,7 @@ void save_map_png( )
 
    if( ( PngOut = fopen( graphicname, "w" ) ) == NULL )
    {
-      bug( "%s: fopen", __FUNCTION__ );
+      bug( "do_drawmap: fopen", 0 );
       perror( graphicname );
    }
 

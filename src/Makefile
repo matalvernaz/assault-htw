@@ -47,7 +47,15 @@ scan: scan.o
 	rm -f scan
 	$(CC) $(L_FLAGS) -o scan scan.o -lcrypt
 
+# Build with AddressSanitizer + UBSanitizer for memory/undefined-behavior detection.
+# Run: make asan && ./ack-asan 6660
+asan:
+	$(MAKE) C_FLAGS="$(C_FLAGS) -fsanitize=address,undefined" \
+	        L_FLAGS="$(L_FLAGS) -fsanitize=address,undefined" \
+	        ack
+	mv ack ack-asan
+
 clean:
-	rm -f $(O_FILES) ack ../area/core
+	rm -f $(O_FILES) ack ack-asan ../area/core
 #	make
 

@@ -283,6 +283,8 @@ void fwrite_char( CHAR_DATA *ch, FILE *fp )
     fprintf( fp, "Spec         %d\n",  ch->pcdata->spec_init );
     fprintf( fp, "Setexit      %d\n",  ch->pcdata->set_exit     );
     fprintf( fp, "Experience   %d\n",  ch->pcdata->experience );
+    fprintf( fp, "Explored     %d\n",  ch->pcdata->explored );
+    fprintf( fp, "Bounty       %d\n",  ch->pcdata->bounty );
     //	fprintf( fp, "Built" );
     //	for ( foo = 0;foo < MAX_POSSIBLE_BUILDING;foo++ )
     //		fprintf( fp, "   %d", ch->pcdata->built[foo] );
@@ -535,8 +537,19 @@ bool load_char_obj( DESCRIPTOR_DATA *d, char *name, bool system_call )
     ch->bvictim = NULL;
     ch->c_time = 0;
     ch->pcdata->alliance = -1;
-    ch->x = number_range(BORDER_SIZE+1,(MAX_MAPS-BORDER_SIZE)-1);
-    ch->y = number_range(BORDER_SIZE+1,(MAX_MAPS-BORDER_SIZE)-1);
+    {
+        int sx, sy, st, tries = 0;
+        do {
+            sx = number_range(BORDER_SIZE+1,(MAX_MAPS-BORDER_SIZE)-1);
+            sy = number_range(BORDER_SIZE+1,(MAX_MAPS-BORDER_SIZE)-1);
+            st = map_table.type[sx][sy][Z_GROUND];
+            tries++;
+        } while ( tries < 1000 &&
+                  ( st == SECT_NULL || st == SECT_OCEAN ||
+                    st == SECT_LAVA || st == SECT_MAGMA ) );
+        ch->x = sx;
+        ch->y = sy;
+    }
     ch->z = Z_GROUND;
     ch->medals = 0;
     ch->game_points = 0;
@@ -713,6 +726,7 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
             }
             KEY( "Bkills",  ch->pcdata->bkills, fread_number( fp ) );
             KEY( "BLost",   ch->pcdata->blost,  fread_number( fp ) );
+            KEY( "Bounty",  ch->pcdata->bounty, fread_number( fp ) );
             SKEY( "Bamfin",      ch->pcdata->bamfin,     fread_string( fp ) );
             SKEY( "Bamfout",     ch->pcdata->bamfout,    fread_string( fp ) );
             break;
@@ -773,6 +787,7 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
             KEY( "EmailValid", ch->pcdata->valid_email, fread_number( fp ) );
             KEY( "Effect", ch->effect,            fread_number( fp ) );
             KEY( "Experience", ch->pcdata->experience,        fread_number( fp ) );
+            KEY( "Explored",   ch->pcdata->explored,          fread_number( fp ) );
             SKEY( "Email", ch->pcdata->email_address, fread_string( fp ) );
             break;
 
@@ -826,9 +841,18 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
                 ch->z     = fread_number( fp );
                 if ( ch->x > MAX_MAPS - BORDER_SIZE || ch->y > MAX_MAPS - BORDER_SIZE )
                 {
-                    ch->x = number_range(BORDER_SIZE+1,MAX_MAPS-BORDER_SIZE-1);
-                    ch->y = number_range(BORDER_SIZE+1,MAX_MAPS-BORDER_SIZE-1);
-                    ch->z = Z_UNDERGROUND;
+                    int sx, sy, st, tries = 0;
+                    do {
+                        sx = number_range(BORDER_SIZE+1,MAX_MAPS-BORDER_SIZE-1);
+                        sy = number_range(BORDER_SIZE+1,MAX_MAPS-BORDER_SIZE-1);
+                        st = map_table.type[sx][sy][Z_GROUND];
+                        tries++;
+                    } while ( tries < 1000 &&
+                              ( st == SECT_NULL || st == SECT_OCEAN ||
+                                st == SECT_LAVA || st == SECT_MAGMA ) );
+                    ch->x = sx;
+                    ch->y = sy;
+                    ch->z = Z_GROUND;
                 }
 
                 fMatch = TRUE;

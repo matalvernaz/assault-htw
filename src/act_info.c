@@ -2589,8 +2589,6 @@ void do_quest( CHAR_DATA *ch, char *argument )
         move( ch, obj->x, obj->y, obj->z );
         ch->map = obj->quest_map;
         if ( !IS_SET(ch->config,CONFIG_BLIND) )
-//            ShowBMap( ch, TRUE );
-//        else
         {
             ShowWMap( ch, IS_SET( ch->config, CONFIG_SMALLMAP)?2:IS_SET(ch->config,CONFIG_TINYMAP)?1:4, 998 );
         }
@@ -2601,10 +2599,50 @@ void do_quest( CHAR_DATA *ch, char *argument )
             ch->in_vehicle = vhc;
         x = URANGE(4,number_range(obj->x-50,obj->x+50),MAX_MAPS-4);
         y = URANGE(4,number_range(obj->y-50,obj->y+50),MAX_MAPS-4);
-        x = URANGE(4,x,MAX_MAPS-4);                         // First URANGE doesn't seem to cut it... strange.
+        x = URANGE(4,x,MAX_MAPS-4);
         y = URANGE(4,y,MAX_MAPS-4);
         sprintf( buf, "It is in the vicinity of %d/%d on %s.\n\r@@eNOTE: This is an ESTIMATE of where the object is, not the exact coordinates!\n\rThe quest item does NOT change location, only the clue does.@@N\n\r", x,y, planet_table[obj->z].name );
         send_to_char( buf, ch );
+        if ( IS_SET(ch->config, CONFIG_BLIND) )
+        {
+            /* Text-based directional clue for screen reader users */
+            /* x increases going EAST, y increases going NORTH */
+            int dx = obj->x - ch->x;
+            int dy = obj->y - ch->y;
+            int dist = (int)sqrt( (double)(dx*dx + dy*dy) );
+            const char *ns = dy > 0 ? "north" : dy < 0 ? "south" : "";
+            const char *ew = dx > 0 ? "east"  : dx < 0 ? "west"  : "";
+            int sect = map_table.type[obj->x][obj->y][obj->z];
+            const char *terrain;
+            switch (sect)
+            {
+                case SECT_ROCK:          terrain = "rocky ground";   break;
+                case SECT_SAND:          terrain = "sand";           break;
+                case SECT_HILLS:         terrain = "hills";          break;
+                case SECT_MOUNTAIN:      terrain = "mountains";      break;
+                case SECT_WATER:         terrain = "water";          break;
+                case SECT_SNOW:          terrain = "snow";           break;
+                case SECT_FIELD:         terrain = "open field";     break;
+                case SECT_FOREST:        terrain = "forest";         break;
+                case SECT_LAVA:          terrain = "lava";           break;
+                case SECT_BURNED:        terrain = "burned land";    break;
+                case SECT_SNOW_BLIZZARD: terrain = "blizzard";       break;
+                case SECT_ASH:           terrain = "ash";            break;
+                case SECT_ICE:           terrain = "ice";            break;
+                case SECT_MAGMA:         terrain = "magma";          break;
+                case SECT_OCEAN:         terrain = "ocean";          break;
+                default:                 terrain = "unknown terrain"; break;
+            }
+            if ( ns[0] && ew[0] )
+                sprintf( buf, "@@cDirection: roughly %s-%s, approximately %d units away. Terrain at target: %s.@@N\n\r", ns, ew, dist, terrain );
+            else if ( ns[0] )
+                sprintf( buf, "@@cDirection: roughly due %s, approximately %d units away. Terrain at target: %s.@@N\n\r", ns, dist, terrain );
+            else if ( ew[0] )
+                sprintf( buf, "@@cDirection: roughly due %s, approximately %d units away. Terrain at target: %s.@@N\n\r", ew, dist, terrain );
+            else
+                sprintf( buf, "@@cThe target is very close to your current position! Terrain: %s.@@N\n\r", terrain );
+            send_to_char( buf, ch );
+        }
         if ( get_building(obj->x,obj->y,obj->z) )
             send_to_char( "\n\r@@yWARNING! Intel suggests that this quest item might be guarded!@@N\n\r", ch );
         ch->questtimer = 60;
@@ -3391,5 +3429,106 @@ void do_fuel (CHAR_DATA *ch, char *argument)
     sprintf(buf, "Vehicle Fuel: %d/%d\r\n", vhc->fuel, vhc->max_fuel);
     send_to_char(buf, ch);
 
+    return;
+}
+
+/*
+ * do_base: display a summary of all owned buildings with HP/shield/virus status.
+ */
+void do_base( CHAR_DATA *ch, char *argument )
+{
+    BUILDING_DATA *bld;
+    char buf[MSL];
+    char line[256];
+    int count = 0;
+    int hp_pct, shield_pct;
+
+    if ( IS_NPC(ch) )
+        return;
+
+    bool blind = IS_SET(ch->config, CONFIG_BLIND);
+
+    if ( !blind )
+    {
+        send_to_char( "@@W=== Base Status ===@@N\n\r", ch );
+        snprintf( buf, sizeof(buf),
+            "@@c%-24s %-4s %-8s %-8s %-7s %s@@N\n\r",
+            "Building", "Lv", "HP", "Shield", "Status", "Location" );
+        send_to_char( buf, ch );
+        send_to_char( "@@b------------------------------------------------------------------------@@N\n\r", ch );
+    }
+    else
+    {
+        send_to_char( "Base Status:\n\r", ch );
+    }
+
+    for ( bld = ch->first_building; bld; bld = bld->next_owned )
+    {
+        hp_pct     = (bld->maxhp     > 0) ? (bld->hp     * 100 / bld->maxhp)     : 0;
+        shield_pct = (bld->maxshield > 0) ? (bld->shield * 100 / bld->maxshield) : 0;
+
+        const char *status_text;
+        if ( bld->value[3] != 0 )
+            status_text = "VIRUS!";
+        else if ( !bld->active )
+            status_text = "Inactive";
+        else
+            status_text = "OK";
+
+        if ( blind )
+        {
+            /* Screen-reader friendly: one plain-text line per building */
+            snprintf( line, sizeof(line),
+                "  %d. %s (Lv%d): HP %d%%, Shield %d%%, %s, at %d,%d\n\r",
+                count + 1,
+                build_table[bld->type].name,
+                bld->level,
+                hp_pct, shield_pct,
+                status_text,
+                bld->x, bld->y );
+        }
+        else
+        {
+            /* colour HP red if low */
+            const char *hp_col = (hp_pct < 30) ? "@@R" : (hp_pct < 70) ? "@@y" : "@@g";
+            /* colour shield cyan normally, red if zero */
+            const char *sh_col = (shield_pct == 0) ? "@@R" : "@@c";
+            const char *status_col;
+            if ( bld->value[3] != 0 )
+                status_col = "@@RVIRUS!  ";
+            else if ( !bld->active )
+                status_col = "@@yInactive";
+            else
+                status_col = "@@gOK      ";
+
+            snprintf( line, sizeof(line),
+                "@@W%-24.24s @@N%-4d %s%-3d%%@@N     %s%-3d%%@@N     %s@@N  %d,%d\n\r",
+                build_table[bld->type].name,
+                bld->level,
+                hp_col,     hp_pct,
+                sh_col,     shield_pct,
+                status_col,
+                bld->x, bld->y );
+        }
+        send_to_char( line, ch );
+        count++;
+    }
+
+    if ( count == 0 )
+        send_to_char( "You own no buildings.\n\r", ch );
+    else if ( !blind )
+    {
+        snprintf( buf, sizeof(buf),
+            "@@b------------------------------------------------------------------------@@N\n\r"
+            "@@WTotal: %d building%s@@N\n\r",
+            count, count == 1 ? "" : "s" );
+        send_to_char( buf, ch );
+    }
+    else
+    {
+        snprintf( buf, sizeof(buf), "Total: %d building%s\n\r",
+            count, count == 1 ? "" : "s" );
+        send_to_char( buf, ch );
+    }
     return;
 }

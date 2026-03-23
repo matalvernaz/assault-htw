@@ -3608,6 +3608,673 @@ Bthere <direction>
  Optionally, you may specify a range to scan in that does not exceed your map
 size.
 ~
+0 base~
+@@cSyntax: @@abase@@N
+@@g
+@@g  Displays a status table for all buildings you own. Each row shows:
+@@g    - Building name and type
+@@g    - Level (1-5)
+@@g    - HP percentage (@@Rred = critical@@g, @@yyellow = damaged@@g, @@ggreen = healthy@@g)
+@@g    - Shield percentage
+@@g    - Status: @@gOK@@g, @@yInactive@@g, or @@RVIRUS!@@g
+@@g    - Map coordinates (x, y)
+@@g
+@@g  Use this command to quickly spot buildings that need attention without
+@@g  having to walk to each one individually.
+@@g
+@@GSee Also: @@yfix, mmap, scan@@N
+~
+0 salvage~
+@@cSyntax: @@asalvage@@N
+@@g
+@@g  Scavenges small amounts of raw materials from ruined terrain.
+@@g  You must be standing on one of the following terrain types:
+@@g    @@y- Burned@@g  (former battlefield or destroyed buildings)
+@@g    @@y- Ash@@g     (aftermath of explosions or fire)
+@@g    @@y- Lava@@g    (yields rock or copper)
+@@g    @@y- Magma@@g   (yields rock or copper)
+@@g
+@@g  Each salvage attempt yields 1-10 units of iron, copper, or rock
+@@g  depending on terrain. There is a @@y5-minute cooldown@@g between attempts.
+@@g
+@@g  You cannot salvage from inside a building or vehicle.
+@@g
+@@GSee Also: @@ymine, refine, chunk@@N
+~
+0 bounty~
+@@cSyntax: @@abounty@@N
+@@cSyntax: @@abounty <player> <amount>@@N
+@@g
+@@g  The bounty system lets you spend Quest Points to place a price on
+@@g  another player's head. When that player is killed, the killer
+@@g  automatically receives the full bounty in QP.
+@@g
+@@g  @@cbounty@@g (no argument)
+@@g    Lists all online players who currently have an active bounty.
+@@g    Bounties persist even when the target is offline.
+@@g
+@@g  @@cbounty <player> <amount>@@g
+@@g    Spends @@y<amount>@@g of your QP and adds it to the bounty on @@y<player>@@g.
+@@g    Multiple players can contribute to the same bounty.
+@@g    The target player is notified immediately.
+@@g
+@@g  Notes:
+@@g    - You cannot place a bounty on yourself.
+@@g    - Bounties have no expiration.
+@@g    - The killer is notified with a [Bounty] message on the kill.
+@@g
+@@GSee Also: @@ykill, score@@N
+~
+0 explorer exploration~
+@@cExploration Achievements@@N
+@@g
+@@g  As you travel across the map, the game tracks which terrain types
+@@g  you have visited for the first time. When you step on a new terrain
+@@g  type, you will see:
+@@g
+@@g    @@G[Explorer] First time on <terrain> terrain! +5 QP@@N
+@@g
+@@g  There are 17 terrain types to discover:
+@@g    Rock, Sand, Hills, Mountain, Water, Snow, Field, Forest,
+@@g    Lava, Burned, Blizzard, Ash, Air, Underground, Ice, Magma, Ocean
+@@g
+@@g  Your exploration progress is saved permanently and carries across
+@@g  sessions. Maximum total reward is @@y85 QP@@g (17 x 5).
+@@g
+@@GSee Also: @@ysalvage, quest, score@@N
+~
+81 goto~
+@@cSyntax: @@agoto <x> <y>@@N
+@@cSyntax: @@agoto <player>@@N
+@@g  [Trust required: 79]
+@@g
+@@g  Teleport yourself to a map coordinate or directly to a player.
+@@g  Works across all map layers (ground, air, space, underground).
+@@g
+@@g  @@cgoto 100 200@@g  - teleport to coordinate 100, 200
+@@g  @@cgoto PlayerName@@g  - teleport to that player's current location
+@@g
+@@GSee Also: @@ytransfer, at@@N
+~
+81 transfer~
+@@cSyntax: @@atransfer <player>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Moves a player to your current location. The player is notified.
+@@g  Useful for helping stuck players or pulling someone into a scene.
+@@g
+@@GSee Also: @@ygoto, force@@N
+~
+81 at~
+@@cSyntax: @@aat <x> <y> <command>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Execute a command as if you were standing at coordinates x, y.
+@@g  The command runs in the context of that map location.
+@@g
+@@g  Example: @@cat 150 200 look@@N
+@@g
+@@GSee Also: @@ygoto@@N
+~
+81 echo~
+@@cSyntax: @@aecho <message>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Broadcasts a message to every connected player on the server.
+@@g  The message appears with no sender attribution. Use sparingly.
+@@g
+@@GSee Also: @@yrecho, wiznet@@N
+~
+81 recho~
+@@cSyntax: @@arecho <message>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Sends a message to all players at your current map coordinates.
+@@g  Unlike echo, this is location-scoped.
+@@g
+@@GSee Also: @@yecho@@N
+~
+81 restore~
+@@cSyntax: @@arestore <player>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Restores a player to full HP. Useful for helping stuck or
+@@g  injured players who need a reset.
+@@g
+@@GSee Also: @@ysmite, slay@@N
+~
+81 purge~
+@@cSyntax: @@apurge@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Removes all objects at your current location from the game world.
+@@g  Use carefully - this permanently destroys items on the ground.
+@@g
+~
+81 holylight~
+@@cSyntax: @@aholylight@@N
+@@g  [Trust required: 80]
+@@g
+@@g  Toggles your ability to see invisible players and objects.
+@@g  When active, invisible characters appear with an (invis) tag.
+@@g
+@@GSee Also: @@ysnoop@@N
+~
+81 silence~
+@@cSyntax: @@asilence <player>@@N
+@@g  [Trust required: 80]
+@@g
+@@g  Prevents a player from using any communication channels
+@@g  (say, tell, gossip, etc.) until silenced again to lift it.
+@@g  The flag toggles on/off.
+@@g
+@@GSee Also: @@yfreeze, deny@@N
+~
+81 paintlock~
+@@cSyntax: @@apaintlock@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Toggles the paintball zone lock. When locked, players cannot
+@@g  enter the paintball arena.
+@@g
+~
+81 bamfin bamfout~
+@@cSyntax: @@abamfin <message>@@N
+@@cSyntax: @@abamfout <message>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  Sets the arrival (bamfin) and departure (bamfout) messages
+@@g  displayed to nearby players when you teleport.
+@@g  Use $n in the string to include your name.
+@@g
+@@g  Example: @@abamfin $n materializes in a flash of light.@@N
+@@g
+~
+81 disconnect~
+@@cSyntax: @@adisconnect <player>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Forcibly disconnects a player's network connection.
+@@g  The player's character is saved before disconnecting.
+@@g  Use when a player is frozen/hung, not as a punishment (use deny for that).
+@@g
+@@GSee Also: @@ydeny, freeze@@N
+~
+81 snoop~
+@@cSyntax: @@asnoop <player>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Monitors a player's input and output in real time.
+@@g  Everything the snooped player sees or types appears in your session.
+@@g  Type @@asnoop@@g again (no argument) to stop snooping.
+@@g
+@@G  Note: @@ySnooping is logged.@@N
+@@g
+@@GSee Also: @@yusers, holylight@@N
+~
+81 force~
+@@cSyntax: @@aforce <player> <command>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Makes a player execute a command as if they had typed it themselves.
+@@g  The action is logged. Use only for administrative purposes.
+@@g
+@@g  Example: @@aforce PlayerName quit@@N
+@@g
+@@GSee Also: @@ytransfer, at@@N
+~
+81 for~
+@@cSyntax: @@afor all <command>@@N
+@@cSyntax: @@afor <player> <command>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Executes a command for multiple targets at once.
+@@g  @@cfor all look@@g  - forces every connected player to look.
+@@g
+@@GSee Also: @@yforce@@N
+~
+81 smite~
+@@cSyntax: @@asmite <player>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Deals a large chunk of damage to a player. Does not kill them.
+@@g  Use for warnings or demonstrations, not as a kill method (use slay).
+@@g
+@@GSee Also: @@yslay, restore@@N
+~
+81 slay~
+@@cSyntax: @@aslay <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Instantly kills a player. The death is handled the same as a
+@@g  normal player death. The kill does NOT count toward your pkill score.
+@@g
+@@GSee Also: @@ysmite, restore@@N
+~
+81 freeze~
+@@cSyntax: @@afreeze <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Toggles freeze on a player. A frozen player cannot type any commands.
+@@g  The freeze flag persists across reconnections.
+@@g  Freeze again to unfreeze.
+@@g
+@@GSee Also: @@ysilence, deny, disconnect@@N
+~
+81 deny~
+@@cSyntax: @@adeny <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Permanently bans a player from logging in. The player's file is
+@@g  flagged so they cannot connect. Use @@aallow@@g to reverse.
+@@g
+@@GSee Also: @@yfreeze, allow, silence@@N
+~
+81 allow~
+@@cSyntax: @@aallow <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Reverses a deny ban, allowing a player to log in again.
+@@g
+@@GSee Also: @@ydeny@@N
+~
+81 reward~
+@@cSyntax: @@areward <player> <amount>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Awards a player a number of Quest Points as an administrative reward.
+@@g  The amount is added directly to their QP total.
+@@g
+@@GSee Also: @@ygpreward, xpreward, qpmode@@N
+~
+81 gpreward~
+@@cSyntax: @@agpreward <player> <amount>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Awards a player Game Points (GP). GP is a secondary currency shown
+@@g  in the score screen separate from Quest Points.
+@@g
+@@GSee Also: @@yreward, xpreward@@N
+~
+81 xpreward~
+@@cSyntax: @@axpreward <player> <amount>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Awards a player experience points directly.
+@@g
+@@GSee Also: @@yreward, gpreward@@N
+~
+81 bload~
+@@cSyntax: @@abload <type> <x> <y>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Spawns a building of the given type at map coordinates x, y.
+@@g  The building is not owned by any player (neutral). Use @@abset@@g
+@@g  to set the owner and other properties afterward.
+@@g
+@@g  Building type is specified by number (see building table).
+@@g
+@@GSee Also: @@ybset, blist, bprint@@N
+~
+81 bset~
+@@cSyntax: @@abset <building-at-location> <field> <value>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Modifies properties of a building at your current location.
+@@g  Common fields:
+@@g    owned    - set owner name
+@@g    level    - set building level (1-5)
+@@g    hp       - set current HP
+@@g    shield   - set current shield
+@@g    active   - set active flag (0/1)
+@@g
+@@GSee Also: @@ybload, blist@@N
+~
+81 blist~
+@@cSyntax: @@ablist@@N
+@@cSyntax: @@ablist <player>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Lists all buildings in the world, optionally filtered to a specific
+@@g  player's owned buildings. Shows type, location, HP, and owner.
+@@g
+@@GSee Also: @@ybset, bprint, owhere@@N
+~
+81 bprint~
+@@cSyntax: @@abprint@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Prints detailed debug information about the building at your
+@@g  current location, including all value[] array entries.
+@@g
+@@GSee Also: @@ybset, blist@@N
+~
+81 mload~
+@@cSyntax: @@amload <vnum>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Loads and spawns a mobile (NPC) by its virtual number at your location.
+@@g
+@@GSee Also: @@yoload, vload, rload@@N
+~
+81 oload~
+@@cSyntax: @@aoload <vnum>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Loads an object by its virtual number and places it in your inventory.
+@@g
+@@GSee Also: @@ymload, vload, oset@@N
+~
+81 vload~
+@@cSyntax: @@avload <vnum>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Loads a vehicle by its virtual number and places it at your location.
+@@g
+@@GSee Also: @@ymload, oload, vset@@N
+~
+81 oset~
+@@cSyntax: @@aoset <object> <field> <value>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Modifies properties of an object in your inventory or at your location.
+@@g  Common fields: name, value0-value9, weight, timer.
+@@g
+@@GSee Also: @@yoload, vset@@N
+~
+81 vset~
+@@cSyntax: @@avset <vehicle> <field> <value>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Modifies properties of a vehicle. Common fields: hp, shield, fuel.
+@@g
+@@GSee Also: @@yvload, oset@@N
+~
+81 owhere~
+@@cSyntax: @@aowhere <object-name>@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Locates all objects in the world matching the given name and
+@@g  shows their coordinates and owner.
+@@g
+@@GSee Also: @@yoload, oset@@N
+~
+81 users~
+@@cSyntax: @@ausers@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Lists all currently connected descriptors with their player name,
+@@g  connection state, host address, and trust level.
+@@g  Useful for spotting stuck connections or suspicious logins.
+@@g
+@@GSee Also: @@ysnoop, disconnect, who@@N
+~
+81 repop~
+@@cSyntax: @@arepop@@N
+@@g  [Trust required: 83]
+@@g
+@@g  Forces an area repopulation tick, respawning objects and mobiles
+@@g  according to the area reset tables.
+@@g
+~
+81 setalliance~
+@@cSyntax: @@asetalliance <player> <alliance-number>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Forces a player into the specified alliance by index number.
+@@g  Use -1 to remove a player from all alliances.
+@@g  Alliance numbers can be found with the @@aalliances@@g command.
+@@g
+@@GSee Also: @@yalliances@@N
+~
+81 prename~
+@@cSyntax: @@aprename <player> <newname>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Renames a player's character. The old player file is deleted and a
+@@g  new one is created under the new name. Use carefully - this is permanent.
+@@g
+@@GSee Also: @@yresetpasswd@@N
+~
+81 resetpasswd resetpassword~
+@@cSyntax: @@aresetpasswd <player> <newpassword>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Resets a player's password to the specified value. Useful when a
+@@g  player has lost access to their account.
+@@g  The player is not notified - tell them the new password manually.
+@@g
+@@GSee Also: @@yprename@@N
+~
+81 findalts~
+@@cSyntax: @@afindalts <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Searches logged login hosts to find other characters that have
+@@g  logged in from the same IP address as the named player.
+@@g  Used to detect alternate accounts (alts).
+@@g
+@@GSee Also: @@ysetmulti, users@@N
+~
+81 setmulti~
+@@cSyntax: @@asetmulti <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Toggles the multi-account approval flag for a player, allowing
+@@g  them to share an IP with another account without triggering
+@@g  the alt-detection system.
+@@g
+@@GSee Also: @@yfindalts@@N
+~
+81 freeze deny silence allow~
+~
+81 sysdata~
+@@cSyntax: @@asysdata@@N
+@@cSyntax: @@asysdata <field> <value>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  With no arguments, displays all system configuration settings
+@@g  (killfest mode, QP mode, XP mode, port number, etc.).
+@@g
+@@g  With arguments, modifies the named setting.
+@@g  Changes take effect immediately but are not saved across reboots
+@@g  unless areasave is run.
+@@g
+@@GSee Also: @@yqpmode, xpmode@@N
+~
+81 qpmode~
+@@cSyntax: @@aqpmode <0|1|2>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Controls how Quest Points are awarded for player kills.
+@@g    0 - No QP for kills (default)
+@@g    1 - QP rewarded normally
+@@g    2 - Enhanced QP mode (killfest)
+@@g
+@@GSee Also: @@yxpmode, reward, sysdata@@N
+~
+81 xpmode~
+@@cSyntax: @@axpmode <0|1>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Toggles whether experience points are awarded for player kills.
+@@g    0 - No XP for kills
+@@g    1 - XP awarded on kill
+@@g
+@@GSee Also: @@yqpmode, sysdata@@N
+~
+81 savemap~
+@@cSyntax: @@asavemap@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Forces the world map (map.txt) to be written to disk immediately.
+@@g  The map is normally saved periodically. Use this after making manual
+@@g  terrain changes to ensure they are persisted.
+@@g
+@@GSee Also: @@yareasave@@N
+~
+81 areasave~
+@@cSyntax: @@aareasave@@N
+@@g  [Trust required: 80]
+@@g
+@@g  Saves all area files (including help text, objects, rooms, mobiles)
+@@g  to disk. Run this after making any in-game edits to world data.
+@@g
+@@GSee Also: @@ysavemap@@N
+~
+81 search~
+@@cSyntax: @@asearch <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Searches for a player by name and reports their current map
+@@g  coordinates, connection status, and trust level.
+@@g  Works for both online and recently-seen offline players.
+@@g
+@@GSee Also: @@ygoto, users, finger@@N
+~
+81 hotreboot hotreboo~
+@@cSyntax: @@ahotreboot@@N
+@@g  [Trust required: 87]
+@@g
+@@g  Performs a hot reboot (copyover) of the game server. All player
+@@g  connections are preserved across the reboot - players do not
+@@g  lose their sessions. Buildings and player data are saved first.
+@@g
+@@g  Use @@ahotreboo@@g to test the command without the trailing letter
+@@g  acting as a guard against accidental activation.
+@@g
+@@g  @@RWARNING: All unsaved in-memory state is reset.@@N
+@@g
+@@GSee Also: @@yreboot, shutdown, wizlock@@N
+~
+81 reboot reboo~
+@@cSyntax: @@areboot@@N
+@@g  [Trust required: 87]
+@@g
+@@g  Performs a full server reboot. All connections are dropped.
+@@g  Players must reconnect after the server comes back up.
+@@g  The @@areboo@@g variant is a guard requiring the full word.
+@@g
+@@g  @@RWARNING: Use hotreboot instead if you want to preserve connections.@@N
+@@g
+@@GSee Also: @@yhotreboot, shutdown, wizlock@@N
+~
+81 shutdown shutdow~
+@@cSyntax: @@ashutdown@@N
+@@g  [Trust required: 87]
+@@g
+@@g  Cleanly shuts down the game server. All player data is saved,
+@@g  then the process exits without restarting.
+@@g  The startup script will NOT restart after a clean shutdown.
+@@g
+@@g  @@RWARNING: This is not hotreboot. Players will be disconnected.@@N
+@@g
+@@GSee Also: @@yhotreboot, reboot, wizlock@@N
+~
+81 wizlock~
+@@cSyntax: @@awizlock@@N
+@@g  [Trust required: 87]
+@@g
+@@g  Toggles wizard lock. When wizlocked, only players with trust >= 80
+@@g  can connect to the game. Useful before a reboot or during maintenance.
+@@g
+@@GSee Also: @@yhotreboot, shutdown@@N
+~
+81 trust~
+@@cSyntax: @@atrust <player> <level>@@N
+@@g  [Trust required: 90]
+@@g
+@@g  Sets a player's trust level directly.
+@@g  Trust levels:
+@@g    0-79   : Normal player
+@@g    80     : Immortal (LEVEL_HERO) - can use basic imm commands
+@@g    81-84  : Senior Immortal
+@@g    85-86  : Elder Immortal
+@@g    87-89  : Ancient Immortal (server control)
+@@g    90+    : Creator level
+@@g
+@@g  @@RWARNING: Trust level 90 grants shell access. Use with extreme care.@@N
+@@g
+@@GSee Also: @@ywizify@@N
+~
+81 wizify~
+@@cSyntax: @@awizify <player>@@N
+@@g  [Trust required: 90]
+@@g
+@@g  Promotes a player to immortal status (sets trust to LEVEL_HERO).
+@@g  A less dangerous alternative to @@atrust@@g for basic immortal grants.
+@@g
+@@GSee Also: @@ytrust@@N
+~
+81 wizhelp~
+@@cSyntax: @@awizhelp@@N
+@@cSyntax: @@awizhelp <command>@@N
+@@g  [Trust required: 81]
+@@g
+@@g  With no argument, lists all immortal commands grouped by trust level.
+@@g
+@@g  With a command name, shows:
+@@g    - The command's minimum trust level and minimum position
+@@g    - The full help entry for that command (if one exists)
+@@g
+@@g  Examples:
+@@g    @@awizhelp goto@@g   - show info and help for the goto command
+@@g    @@awizhelp slay@@g   - show info and help for the slay command
+@@g
+@@GSee Also: @@yhelp@@N
+~
+81 survey~
+@@cSyntax: @@asurvey@@N
+@@g  [Trust required: 80]
+@@g
+@@g  Displays an overview of the game area near your current location,
+@@g  showing terrain, buildings, and players in an extended range.
+@@g  Useful for getting a quick picture of an area without moving.
+@@g
+@@GSee Also: @@ymmap, scan@@N
+~
+81 togbuild~
+@@cSyntax: @@atogbuild <building-type>@@N
+@@g  [Trust required: 87]
+@@g
+@@g  Toggles a building type's disabled flag. Disabled building types
+@@g  cannot be constructed by players. Use this to enable or disable
+@@g  specific building types server-wide without a code change.
+@@g
+@@GSee Also: @@ybload, sysdata@@N
+~
+81 shell~
+@@cSyntax: @@ashell <command>@@N
+@@g  [Trust required: 90]
+@@g
+@@g  @@RExecutes a shell command on the host operating system.@@N
+@@g  The output is sent back to you in-game.
+@@g
+@@g  @@REXTREME CAUTION: This runs as the MUD process user. There is no
+@@g  sandboxing. Do not give trust 90 to anyone you do not fully trust
+@@g  with root-equivalent access to this machine.@@N
+@@g
+~
+81 scheck~
+@@cSyntax: @@ascheck <player>@@N
+@@g  [Trust required: 85]
+@@g
+@@g  Performs a security check on a player's account, showing their
+@@g  login history, host addresses, trust level changes, and any
+@@g  flags set on their character file.
+@@g
+@@GSee Also: @@yfindalts, snoop@@N
+~
+81 abuild~
+@@cSyntax: @@aabuild@@N
+@@g  [Trust required: 80]
+@@g
+@@g  Opens the area building editor. Used for creating and editing
+@@g  area files, room descriptions, objects, and mobiles.
+@@g  This is the in-game world-building tool.
+@@g
+@@GSee Also: @@yareasave, alist@@N
+~
 0 $~
 #ROOMS
 #1
