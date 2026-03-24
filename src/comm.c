@@ -2975,36 +2975,33 @@ void nanny(DESCRIPTOR_DATA *d, char *argument) {
 							bad = FALSE;
 						}
 					}
-					obj = create_object(get_obj_index(32600), 0);
-					obj_to_char(obj, ch);
-					obj = create_object(get_obj_index(32601), 0);
-					obj_to_char(obj, ch);
-					obj = create_object(get_obj_index(32602), 0);
-					obj_to_char(obj, ch);
-					obj = create_object(get_obj_index(32603), 0);
-					obj_to_char(obj, ch);
-					obj = create_object(get_obj_index(32604), 0);
-					obj_to_char(obj, ch);
+					/* T-shirt */
 					obj = create_object(get_obj_index(32658), 0);
 					obj_to_char(obj, ch);
 
-					/* Starter resource kit so new players can place an HQ immediately */
+					/* Starter resource kit */
 					{
 						OBJ_DATA *res;
-						res = create_material(ITEM_IRON);
-						res->value[1] = 50;
-						res->weight = res->weight * res->value[1];
-						obj_to_char(res, ch);
-						res = create_material(ITEM_ROCK);
-						res->value[1] = 30;
-						res->weight = res->weight * res->value[1];
-						obj_to_char(res, ch);
-						res = create_material(ITEM_COPPER);
-						res->value[1] = 20;
-						res->weight = res->weight * res->value[1];
-						obj_to_char(res, ch);
+						static const struct { int type; int qty; } starter[] = {
+							{ ITEM_IRON,   50 },
+							{ ITEM_ROCK,   30 },
+							{ ITEM_LOG,    30 },
+							{ ITEM_COPPER, 20 },
+							{ ITEM_STICK,  20 },
+							{ ITEM_SKIN,   15 },
+							{ ITEM_GOLD,   10 },
+							{ ITEM_SILVER, 10 },
+						};
+						int s;
+						for ( s = 0; s < 8; s++ )
+						{
+							res = create_material( starter[s].type );
+							res->value[1] = starter[s].qty;
+							res->weight = res->weight * res->value[1];
+							obj_to_char( res, ch );
+						}
 					}
-					send_to_char( "@@G[Starter Kit] You have been given some iron, rock, and copper to get your base started!@@N\n\r", ch );
+					send_to_char( "@@G[Starter Kit] You've been given a basic resource pack to get your base started.@@N\n\r", ch );
 					move(ch, x, y, ch->z);
 				} else {
 					BUILDING_DATA *bld;
