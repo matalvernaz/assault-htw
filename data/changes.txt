@@ -1,4 +1,4 @@
-11
+12
 improved this old thing with AI so it mostly works~
 Fucker~
 Mar 22, 2026~
@@ -53,4 +53,9 @@ Added AI factions - autonomous AI-controlled building owners that attack each ot
 Fucker~
 Mar 23, 2026~
 1774296115
+
+made it so the game should hopefully reboot if crashed. Please don't test it.~
+Fucker~
+Mar 23, 2026~
+1774327159
 
