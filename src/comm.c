@@ -363,6 +363,16 @@ int control;
 int control2;
 
 /*
+ * Container stop (docker stop, the nightly backup's stop): the startup script
+ * passes Docker's SIGTERM on to the game. The handler only notes it, and
+ * game_loop_unix saves the world and every player at the top of its next pass
+ * and ends the loop, so a stop never cuts a save file off half-written.
+ */
+volatile sig_atomic_t shutdown_signal_received = 0;
+void shutdown_signal ( int sig );
+void save_world_and_stop ( void );
+
+/*
  * OS-dependent local functions.
  */
 #if defined(macintosh) || defined(MSDOS)
@@ -480,6 +490,8 @@ int main(int argc, char **argv) {
 	/*+*/global_port = port;
 	if (fCopyOver)
 		abort_threshold = BOOT_DB_ABORT_THRESHOLD;
+	/* before boot_db, which writes objects.lst too: a stop during boot is held for the game loop */
+	signal(SIGTERM, shutdown_signal);
 	boot_db(fCopyOver);
 #ifndef DEBUG
 #ifndef WIN32
@@ -745,6 +757,43 @@ void reopen_socket(int sig) {
 	signal(SIGUSR1, reopen_socket);
 }
 
+/*
+ * SIGTERM only sets a flag. Saving inside the handler could land in the middle
+ * of a save the game loop is already doing, so the loop does the saving.
+ */
+void shutdown_signal(int sig) {
+	shutdown_signal_received = 1;
+}
+
+/*
+ * Saves what every tick saves (objects, buildings, alliances) and every player
+ * who is playing, then lets the main loop end; main() then logs "Normal
+ * termination of game." and exits 0. Called only between pulses, never from
+ * the signal handler.
+ */
+void save_world_and_stop(void) {
+	CHAR_DATA *player;
+	DESCRIPTOR_DATA *d;
+
+	log_string("SIGTERM received: saving the world and every player, then shutting down.");
+	save_objects(0);
+	save_buildings();
+	save_alliances();
+	/* every player in the world, linkdead ones too */
+	for (player = first_char; player != NULL; player = player->next) {
+		if (!IS_NPC(player)) {
+			save_char_obj(player);
+		}
+	}
+	for (d = first_desc; d != NULL; d = d->next) {
+		if (d->connected == CON_PLAYING) {
+			write_to_buffer(d, "\n\rThe game is shutting down for maintenance. Your character has been saved.\n\r", 0);
+		}
+	}
+	log_string("Shutdown save complete.");
+	merc_down = TRUE;
+}
+
 /* + */
 
 void game_loop_unix(int control) {
@@ -790,6 +839,16 @@ void game_loop_unix(int control) {
 		}
 		/*+*/
 
+		/* a container stop: let any area save finish (do_shutdown waits for it too), then save and end the loop */
+		if (shutdown_signal_received) {
+			extern int saving_area;
+
+			build_save_flush();
+			if (!saving_area) {
+				save_world_and_stop();
+			}
+		}
+
 		/*
 		 * Poll all active descriptors.
 		 */
@@ -818,11 +877,19 @@ void game_loop_unix(int control) {
 		/* IMC */
 		//        maxdesc=imc_fill_fdsets(maxdesc, &in_set, &out_set, &exc_set);
 		if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
+			/* a signal (SIGTERM, SIGUSR1) can interrupt the poll: start the pass again */
+			if (errno == EINTR) {
+				continue;
+			}
 			perror("Game_loop: select: poll");
 			exit(1);
 		}
 
 		if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
+			/* a signal (SIGTERM, SIGUSR1) can interrupt the poll: start the pass again */
+			if (errno == EINTR) {
+				continue;
+			}
 			perror("Game_loop: select: poll");
 			exit(1);
 		}

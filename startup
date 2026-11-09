@@ -19,9 +19,36 @@ ulimit -s 100000
 
 renice 0 -p $$
 
+# Stopping the container (docker stop, the nightly backup): Docker sends SIGTERM
+# to this script, which runs as PID 1. Without a trap the kernel drops it, and
+# Docker SIGKILLs the game when the stop timeout runs out. So pass SIGTERM on to
+# the game, which saves the world and every player and exits (shutdown_signal in
+# src/comm.c), wait for it, and exit instead of starting it again.
+# compose.yaml gives the save time with stop_grace_period.
+stopping=0
+game_pid=""
+term_sent=0
+
+stop_game() {
+  stopping=1
+  # the game gets SIGTERM once only
+  if [ -n "$game_pid" ] && [ "$term_sent" = 0 ]; then
+    term_sent=1
+    echo "startup: stop requested $(date), sending SIGTERM to the game (pid $game_pid)" >>$logfile
+    kill -TERM "$game_pid" 2>/dev/null
+  fi
+}
+
+trap stop_game TERM
+
 # loop indefinately
 while :
 do
+  # a stop that came in while the game was down: don't start it again
+  if [ "$stopping" = 1 ]; then
+    exit 0
+  fi
+
   # find a logfile
 
   index=1000
@@ -32,8 +59,28 @@ do
     let index=$index+1
   done
 
-  # run the mud
-  ../src/ack $port >$logfile 2>&1
+  # run the mud in the background so the trap can run while it is up
+  # (>> so the lines this script adds are not overwritten by the game)
+  ../src/ack $port >>$logfile 2>&1 &
+  game_pid=$!
+
+  # a stop that came in just before the game started still has to reach it
+  if [ "$stopping" = 1 ]; then
+    stop_game
+  fi
+
+  # wait returns as soon as the trap runs, so keep waiting until the game has really gone
+  wait "$game_pid"
+  while kill -0 "$game_pid" 2>/dev/null; do
+    wait "$game_pid"
+  done
+  game_pid=""
+
+  # the container is stopping and the game has saved and exited: so do we
+  if [ "$stopping" = 1 ]; then
+    echo "startup: stopped by SIGTERM $(date)" >>$logfile
+    exit 0
+  fi
 
   # shutdown?
 
